@@ -6,17 +6,12 @@ set rtp+=~/.vim/bundle/vundle
 call vundle#rc('$HOME/.vim/bundle/')
 
 Bundle 'gmarik/vundle'
-Bundle 'git://git.wincent.com/command-t.git'
-Bundle 'kien/ctrlp.vim.git'
-
+" Bundle 'wincent/Command-T'
 Bundle 'vim-scripts/minibufexplorerpp.git'
-Bundle 'vim-scripts/vcscommand.vim.git'
-Bundle 'vim-scripts/vim-coffee-script.git'
 Bundle 'tpope/vim-rails.git'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-fugitive.git'
 Bundle 'tpope/vim-haml.git'
-Bundle 'itspriddle/vim-jquery.git'
 Bundle 'mineiro/vim-latex.git'
 Bundle 'Lokaltog/vim-powerline.git'
 Bundle 'Lokaltog/vim-easymotion.git'
@@ -25,16 +20,15 @@ Bundle 'felixge/vim-nodejs-errorformat.git'
 Bundle 'duff/vim-scratch.git'
 Bundle 'danro/rename.vim.git'
 Bundle 'scrooloose/nerdcommenter.git'
+Bundle 'scrooloose/nerdtree'
 Bundle 'maksimr/vim-jsbeautify.git'
 Bundle 'vim-scripts/jshint.vim.git'
 Bundle 'scrooloose/syntastic.git'
 Bundle 'majutsushi/tagbar.git'
 Bundle 'kien/ctrlp.vim.git'
 Bundle 'duff/vim-bufonly.git'
-Bundle 'leafgarland/typescript-vim.git'
 Bundle 'groenewege/vim-less.git'
 Bundle 'goldfeld/vim-seek.git'
-Bundle 'mattn/zencoding-vim.git'
 Bundle 'vim-scripts/BufClose.vim.git'
 Bundle 'vim-scripts/vimwiki.git'
 Bundle 'tpope/vim-unimpaired.git'
@@ -43,19 +37,34 @@ Bundle 'kana/vim-textobj-user'
 Bundle 'kana/vim-textobj-entire'
 Bundle 'mileszs/ack.vim'
 Bundle 'airblade/vim-gitgutter'
-Bundle 'leafgarland/typescript-vim'
-" Bundle 'marijnh/tern_for_vim'
 Bundle 'jakar/vim-json'
+Bundle 'godlygeek/tabular'
+" Bundle 'Valloric/YouCompleteMe'
+Bundle 'vim-scripts/a.vim'
+Bundle 'dkprice/vim-easygrep'
+Bundle 'junegunn/fzf'
+
+" Typescript-related plugins
+Bundle 'Shougo/vimproc.vim'
+Bundle 'leafgarland/typescript-vim'
+Bundle 'clausreinke/typescript-tools.vim'
 
 
 filetype plugin indent on
 
-set directory+=,~/tmp
+" All operations work with the OS clipboard
+set clipboard=unnamed
+
+set directory=~/.vim/tmp
 
 " highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " au BufWinEnter * let w:m2=matchadd('OverLength', '\%>81v.\+', -1)
 
 " au GUIEnter * simalt ~x
+
+
+set lazyredraw          " redraw only when we need to.
+
 
 "-------------------------
 " Базовые настройки
@@ -231,6 +240,17 @@ map <F9> :make<cr>
 vmap <F9> <esc>:make<cr>i
 imap <F9> <esc>:make<cr>i
 
+" S-F8 - "make clean"
+map <S-F8> :ClearAllCtrlPCaches<cr>
+vmap <S-F8> <esc>:ClearAllCtrlPCaches<cr>i
+imap <S-F8> <esc>:ClearAllCtrlPCaches<cr>i
+
+" Ctrl-p config
+let g:ctrlp_clear_cache_on_exit = 0
+if exists("g:ctrl_user_command")
+  unlet g:ctrlp_user_command
+endif
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/vendor/*,*/\.git/*
 
 let $JS_CMD='node'
 autocmd filetype javascript map <F9> :JSHint<cr>
@@ -324,7 +344,6 @@ set mps-=[:]
 
 
 au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
-
 au! BufRead,BufNewFile *.haml         setfiletype haml
 
 "autocmd FileType php set omnifunc=phpcomplete#Complete
@@ -349,6 +368,8 @@ highlight Pmenu guibg=brown gui=bold
 " C++ stuff
 
 autocmd FileType c set omnifunc=ccomplete#Complete
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+
 
 " Add highlighting for function definition in C++
 function! EnhanceSyntax()
@@ -377,7 +398,10 @@ nmap ,i :call IncludeGuard()<CR>
 
 """""""""""""""""
 
-nmap ,t :CommandT<CR>
+" nmap ,t :CommandT<CR>
+" nmap ,t <C-P>
+
+
 
 """""
 " vimrc
@@ -404,7 +428,10 @@ set langmap=АБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЪЗ;ABCDEFGHIJKLMNO
 
 " let g:syntastic_check_on_open=1
 let g:syntastic_json_checkers = ['jsonlint']
-au! BufRead,BufNewFile *.json setfiletype json
+au! BufRead,BufNewFile *.json set filetype=json
+au! BufRead,BufNewFile *.jsfl set filetype=javascript
+" Temporarily disable syntastic for typescript, it's just so slow.
+let g:loaded_typescript_syntax_checker = 0
 
 
 
@@ -418,6 +445,7 @@ fun! <SID>StripTrailingWhitespaces()
 endfun
 
 autocmd FileType c,cpp,javascript,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+
 
 """""
 " Show visual delimiter at 80
@@ -435,10 +463,7 @@ let g:vimwiki_table_auto_fmt = 1
 let g:vimwiki_list_ignore_newline = 0
 
 
-let g:tern_map_keys = 1
-let g:tern_show_argument_hints = 'on_hold'
-
-nmap ,z :e $HOME/Dropbox-personal/Dropbox/vimwiki/feedback.wiki<CR>
+nmap ,z :e $HOME/Dropbox\ (Personal)/vimwiki/feedback.wiki<CR>
 
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -447,4 +472,35 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 nmap <C-S-G> "zyw:exe "Ack ".expand("<cword>")." client --type js"<CR>
 nmap <C-S-H> "zyw:exe "Ack ".expand("<cword>")." server --type js"<CR>
 
+set wildignore+=client-build,tags
+
+
+"" SPLITS
+
+" Easier split movement
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+set splitbelow
+set splitright
+
+
+" Auto saving
+" autocmd BufLeave,FocusLost * silent! wall
+
+
+if exists(":Tabularize")
+    nmap <leader>a= :Tabularize /=<CR>
+    vmap <leader>a= :Tabularize /=<CR>
+endif
+
+
+let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
+if isdirectory(s:clang_library_path)
+    let g:clang_library_path=s:clang_library_path
+endif
+
+nnoremap ,d :NERDTreeToggle<cr>
 
