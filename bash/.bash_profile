@@ -16,12 +16,16 @@ if [ -f `brew --prefix`/etc/bash_completion ]; then
 . `brew --prefix`/etc/bash_completion
 fi
 
+if [ -f ~/.git-completion.bash ]; then
+    . ~/.git-completion.bash
+fi
+
 export ANDROID_NDK_ROOT=/usr/local/opt/android-ndk
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export PATH=$PATH:$HOME/Library/Python/2.7/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$ANDROID_NDK_ROOT:~/bin:/usr/local/bin:$PATH:/usr/local/opt/android-sdk/platform-tools:/usr/local/opt/android-sdk/tools:/usr/local/share/npm/bin
 export PATH=$PATH:/usr/local/m-cli
-source ~/.git-completion.bash
+
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.fastlane/bin:$PATH"

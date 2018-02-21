@@ -1,53 +1,49 @@
 filetype off                   " required!
 
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" Updates
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc('$HOME/.vim/bundle/')
-
-Bundle 'gmarik/vundle'
-" Bundle 'wincent/Command-T'
-Bundle 'vim-scripts/minibufexplorerpp.git'
-Bundle 'tpope/vim-rails.git'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-fugitive.git'
-Bundle 'tpope/vim-haml.git'
-Bundle 'mineiro/vim-latex.git'
-Bundle 'Lokaltog/vim-powerline.git'
-Bundle 'Lokaltog/vim-easymotion.git'
-Bundle 'pangloss/vim-javascript.git'
-Bundle 'felixge/vim-nodejs-errorformat.git'
-Bundle 'duff/vim-scratch.git'
-Bundle 'danro/rename.vim.git'
-Bundle 'scrooloose/nerdcommenter.git'
-Bundle 'scrooloose/nerdtree'
-Bundle 'maksimr/vim-jsbeautify.git'
-Bundle 'vim-scripts/jshint.vim.git'
-Bundle 'scrooloose/syntastic.git'
-Bundle 'majutsushi/tagbar.git'
-Bundle 'kien/ctrlp.vim.git'
-Bundle 'duff/vim-bufonly.git'
-Bundle 'groenewege/vim-less.git'
-Bundle 'goldfeld/vim-seek.git'
-Bundle 'vim-scripts/BufClose.vim.git'
-Bundle 'vim-scripts/vimwiki.git'
-Bundle 'tpope/vim-unimpaired.git'
-Bundle 'heavenshell/vim-jsdoc.git'
-Bundle 'kana/vim-textobj-user'
-Bundle 'kana/vim-textobj-entire'
-Bundle 'mileszs/ack.vim'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'jakar/vim-json'
-Bundle 'godlygeek/tabular'
-" Bundle 'Valloric/YouCompleteMe'
-Bundle 'vim-scripts/a.vim'
-Bundle 'dkprice/vim-easygrep'
-Bundle 'junegunn/fzf'
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'vim-scripts/minibufexplorerpp.git'
+Plugin 'tpope/vim-rails.git'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-fugitive.git'
+Plugin 'tpope/vim-haml.git'
+Plugin 'Lokaltog/vim-powerline.git'
+Plugin 'Lokaltog/vim-easymotion.git'
+Plugin 'pangloss/vim-javascript.git'
+Plugin 'felixge/vim-nodejs-errorformat.git'
+Plugin 'duff/vim-scratch.git'
+Plugin 'danro/rename.vim.git'
+Plugin 'scrooloose/nerdcommenter.git'
+Plugin 'scrooloose/nerdtree'
+Plugin 'maksimr/vim-jsbeautify.git'
+Plugin 'vim-scripts/jshint.vim.git'
+Plugin 'scrooloose/syntastic.git'
+Plugin 'majutsushi/tagbar.git'
+Plugin 'kien/ctrlp.vim.git'
+Plugin 'duff/vim-bufonly.git'
+Plugin 'groenewege/vim-less.git'
+Plugin 'goldfeld/vim-seek.git'
+Plugin 'vim-scripts/BufClose.vim.git'
+Plugin 'vim-scripts/vimwiki.git'
+Plugin 'tpope/vim-unimpaired.git'
+Plugin 'heavenshell/vim-jsdoc.git'
+Plugin 'kana/vim-textobj-user'
+Plugin 'kana/vim-textobj-entire'
+Plugin 'mileszs/ack.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'jakar/vim-json'
+Plugin 'godlygeek/tabular'
+Plugin 'vim-scripts/a.vim'
+Plugin 'dkprice/vim-easygrep'
 
 " Typescript-related plugins
-Bundle 'Shougo/vimproc.vim'
-Bundle 'leafgarland/typescript-vim'
-Bundle 'clausreinke/typescript-tools.vim'
+Plugin 'Shougo/vimproc.vim'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'clausreinke/typescript-tools.vim'
+
+call vundle#end()
 
 
 filetype plugin indent on
@@ -467,11 +463,6 @@ nmap ,z :e $HOME/Dropbox\ (Personal)/vimwiki/feedback.wiki<CR>
 
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
-
-" Search the current word under the client/ dir
-nmap <C-S-G> "zyw:exe "Ack ".expand("<cword>")." client --type js"<CR>
-nmap <C-S-H> "zyw:exe "Ack ".expand("<cword>")." server --type js"<CR>
-
 set wildignore+=client-build,tags
 
 
