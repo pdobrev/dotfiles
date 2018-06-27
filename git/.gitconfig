@@ -1,0 +1,9 @@
+[user]
+	email = peter.dobrev@gmail.com
+	name = Petar Dobrev
+
+[alias]
+	gr = log --oneline --graph --decorate --all
+	dcs = diff --cached --stat
+	dc = diff --cached
+
