@@ -3,7 +3,7 @@
 	name = Petar Dobrev
 
 [alias]
-	gr = log --oneline --graph --decorate --all
+	gr = log --oneline --graph --decorate 
 	dcs = diff --cached --stat
 	dc = diff --cached
 
