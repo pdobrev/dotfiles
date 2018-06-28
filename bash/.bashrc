@@ -33,3 +33,15 @@ export PATH=$PATH:$ANDROID_NDK_ROOT:~/bin:/usr/local/bin:$PATH:/usr/local/opt/an
 
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.fastlane/bin:$PATH"
+export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+# added by travis gem
+[ -f /Users/pesho/.travis/travis.sh ] && source /Users/pesho/.travis/travis.sh
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.bash ] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.bash
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash ] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash
+
