@@ -8,17 +8,18 @@ parse_git_branch() {
 export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
 export EDITOR="vim"
 
-alias ls="ls -a --color"
-
 if [ "$(uname)" == "Darwin" ]; then
     # Mac specific stuff
 
     export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx # Dark background
+    alias ls="ls -a"
     # export LSCOLORS=ExFxCxDxBxegedabagacad # Light background
     
     if [ -f `brew --prefix`/etc/bash_completion ]; then
     . `brew --prefix`/etc/bash_completion
     fi
+else
+    alias ls="ls -a --color"
 fi
 
 if [ -f ~/.git-completion.bash ]; then
