@@ -10,13 +10,14 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'Lokaltog/vim-powerline.git'
 Plugin 'Lokaltog/vim-easymotion.git'
 Plugin 'pangloss/vim-javascript.git'
+Plugin 'mxw/vim-jsx'
+Plugin 'w0rp/ale'
+
 Plugin 'duff/vim-scratch.git'
 Plugin 'danro/rename.vim.git'
 Plugin 'scrooloose/nerdcommenter.git'
 Plugin 'scrooloose/nerdtree'
 Plugin 'maksimr/vim-jsbeautify.git'
-Plugin 'vim-scripts/jshint.vim.git'
-Plugin 'scrooloose/syntastic.git'
 Plugin 'majutsushi/tagbar.git'
 Plugin 'kien/ctrlp.vim.git'
 Plugin 'duff/vim-bufonly.git'
@@ -38,6 +39,16 @@ Plugin 'leafgarland/typescript-vim'
 Plugin 'clausreinke/typescript-tools.vim'
 
 call vundle#end()
+
+let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\   'typescript': ['tslint']
+\}
+let b:ale_linters = {'javascript': ['eslint'], 'typescript': ['tslint']}
+
 
 
 filetype plugin indent on
@@ -243,9 +254,6 @@ endif
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/vendor/*,*/\.git/*
 
 let $JS_CMD='node'
-autocmd filetype javascript map <F9> :JSHint<cr>
-autocmd filetype javascript vmap <F9> <esc>:JSHint<cr>i
-autocmd filetype javascript imap <F9> <esc>:JSHint<cr>i
 
 " S-F9 - "make clean"
 map <S-F9> :make clean<cr>
@@ -415,14 +423,6 @@ if has("gui_running")
 endif
 
 set langmap=АБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЪЗ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,абцдефгхийклмнопярстужвьъз;abcdefghijklmnopqrstuvwxyz
-
-" let g:syntastic_check_on_open=1
-let g:syntastic_json_checkers = ['jsonlint']
-au! BufRead,BufNewFile *.json set filetype=json
-au! BufRead,BufNewFile *.jsfl set filetype=javascript
-" Temporarily disable syntastic for typescript, it's just so slow.
-let g:loaded_typescript_syntax_checker = 0
-
 
 
 """""
