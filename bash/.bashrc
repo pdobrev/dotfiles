@@ -18,6 +18,9 @@ if [ "$(uname)" == "Darwin" ]; then
     if [ -f `brew --prefix`/etc/bash_completion ]; then
     . `brew --prefix`/etc/bash_completion
     fi
+
+    export PATH=$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin:$PATH
+    export PATH="$HOME/.fastlane/bin:$PATH"
 else
     alias ls="ls -a --color"
 fi
@@ -28,12 +31,10 @@ fi
 
 export ANDROID_NDK_ROOT=/usr/local/opt/android-ndk
 export ANDROID_HOME=/usr/local/opt/android-sdk
-export PATH=$PATH:$HOME/Library/Python/2.7/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$ANDROID_NDK_ROOT:~/bin:/usr/local/bin:$PATH:/usr/local/opt/android-sdk/platform-tools:/usr/local/opt/android-sdk/tools:/usr/local/share/npm/bin
 
 export PATH="/usr/local/sbin:$PATH"
-export PATH="$HOME/.fastlane/bin:$PATH"
 export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 # added by travis gem
