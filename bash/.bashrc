@@ -10,7 +10,6 @@ export EDITOR="vim"
 
 if [ "$(uname)" == "Darwin" ]; then
     # Mac specific stuff
-
     export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx # Dark background
     alias ls="ls -a"
     # export LSCOLORS=ExFxCxDxBxegedabagacad # Light background
@@ -21,6 +20,7 @@ if [ "$(uname)" == "Darwin" ]; then
 
     export PATH=$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin:$PATH
     export PATH="$HOME/.fastlane/bin:$PATH"
+
 else
     alias ls="ls -a --color"
 fi
@@ -46,4 +46,6 @@ export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 # tabtab source for sls package
 # uninstall by removing these lines or running `tabtab uninstall sls`
 [ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash ] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash
+
+source ~/dotfiles/bash/github.bash
 

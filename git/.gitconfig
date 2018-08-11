@@ -1,11 +1,23 @@
 [user]
 	email = peter.dobrev@gmail.com
 	name = Petar Dobrev
-
 [alias]
 	gr = log --oneline --graph --decorate 
 	dcs = diff --cached --stat
 	dc = diff --cached
+
+    # Taken from https://haacked.com/archive/2014/07/28/github-flow-aliases/
+    co = checkout
+    ec = config --global -e
+    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+    cob = checkout -b
+    save = !git add -A && git commit -m 'SAVEPOINT'
+    wip = commit -am "WIP"
+    undo = reset HEAD~1 --mixed
+    amend = commit -a --amend
+    wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+    bclean = "!f() { git checkout ${1-master} && git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d; }; f"
+    bdone = "!f() { git checkout ${1-master} && git up && git bclean ${1-master}; }; f"
 
 [core]
 	excludesfile = ~/.gitignore_global
@@ -17,3 +29,4 @@
 	trustExitCode = true
 [commit]
 	template = ~/.stCommitMsg
+
