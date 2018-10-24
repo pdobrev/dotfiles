@@ -2,6 +2,8 @@ alias mtime="ruby tools/mtime_cache.rb -g .mtime_cache_globs -c .mtime_cache/cac
 
 export CLICOLOR=1
 
+export LANG=en_US.UTF-8
+
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
@@ -18,7 +20,7 @@ if [ "$(uname)" == "Darwin" ]; then
     . `brew --prefix`/etc/bash_completion
     fi
 
-    export PATH=$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin:$PATH
+    export PATH=$PATH:$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin
     export PATH="$HOME/.fastlane/bin:$PATH"
 
 else
@@ -49,3 +51,5 @@ export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 source ~/dotfiles/bash/github.bash
 
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
