@@ -3,6 +3,7 @@
 	name = Petar Dobrev
 [alias]
 	gr = log --oneline --graph --decorate 
+    gr1 = log --graph --decorate --pretty=oneline --abbrev-commit --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
 	dcs = diff --cached --stat
 	dc = diff --cached
 
