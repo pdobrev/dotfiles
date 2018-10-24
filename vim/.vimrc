@@ -40,6 +40,7 @@ Plugin 'clausreinke/typescript-tools.vim'
 
 call vundle#end()
 
+" ALE Stuff
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
@@ -48,8 +49,6 @@ let g:ale_fixers = {
 \   'typescript': ['tslint']
 \}
 let b:ale_linters = {'javascript': ['eslint'], 'typescript': ['tslint']}
-
-
 
 filetype plugin indent on
 
@@ -66,55 +65,21 @@ set directory=~/.vim/tmp
 
 set lazyredraw          " redraw only when we need to.
 
-
-"-------------------------
-" Базовые настройки
-"-------------------------
-
-" Включаем несовместимость настроек с Vi (ибо Vi нам и не понадобится).
 set nocompatible
-
-" Показывать положение курсора всё время.
 set ruler
-
-" Показывать незавершённые команды в статусбаре
 set showcmd
-
-" Включаем нумерацию строк
 set nu
-
-" Фолдинг по отсупам
-" set foldmethod=syntax
-
-" Поиск по набору текста (очень полезная функция)
 set incsearch
-
-" Отключаем подстветку найденных вариантов, и так всё видно.
 set nohlsearch
-
-" Теперь нет необходимости передвигать курсор к краю экрана, чтобы подняться в режиме редактирования
 set scrolljump=7
-
-" Теперь нет необходимости передвигать курсор к краю экрана, чтобы опуститься в режиме редактирования
 set scrolloff=7
-
-" Выключаем надоедливый "звонок"
 set novisualbell
 set t_vb=
-
-" Поддержка мыши
 " set mouse=a
 " set mousemodel=popup
-
-" Кодировка текста по умолчанию
 set termencoding=utf8
-
-" Не выгружать буфер, когда переключаемся на другой
-" Это позволяет редактировать несколько файлов в один и тот же момент без необходимости сохранения каждый раз
-" когда переключаешься между ними
 set hidden
 
-" Скрыть панель в gui версии ибо она не нужна
 set guioptions-=T
 set guioptions-=m
 set guioptions-=r
@@ -147,25 +112,19 @@ set mousehide
 " Включить автоотступы
 set autoindent
 
-" Влючить подстветку синтаксиса
 syntax on
 
-" allow to use backspace instead of "x"
 set backspace=indent,eol,start whichwrap+=<,>,[,]
 
-" Преобразование Таба в пробелы
 set expandtab
 
-" Размер табулации по умолчанию
 set softtabstop=4
 set tabstop=4
 set shiftwidth=4
 
-" Формат строки состояния
 set statusline=%<%f%h%m%r\ %b\ %{&encoding}\ 0x\ \ %l,%c%V\ %P
 set laststatus=2
 
-" Включаем "умные" отспупы ( например, автоотступ после {)
 set smartindent
 
 " Fix <Enter> for comment
@@ -357,6 +316,8 @@ set wildmode=longest:list:full
 set wildmenu
 
 highlight Pmenu guibg=brown gui=bold
+
+
 """""""""""""
 " functions "
 """""""""""""
@@ -406,7 +367,6 @@ nmap ,i :call IncludeGuard()<CR>
 nmap ,v :e $MYVIMRC<CR>
 autocmd! bufwritepost $MYVIMRC source %
 
-set formatprg=par\ -w80q
 set noerrorbells
 set visualbell
 set t_vb=
@@ -453,7 +413,7 @@ let g:vimwiki_table_auto_fmt = 1
 let g:vimwiki_list_ignore_newline = 0
 
 
-nmap ,z :e $HOME/Dropbox\ (Personal)/vimwiki/feedback.wiki<CR>
+" nmap ,z :e $HOME/Dropbox\ (Personal)/vimwiki/feedback.wiki<CR>
 
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -489,3 +449,5 @@ endif
 
 nnoremap ,d :NERDTreeToggle<cr>
 
+
+highlight ColorColumn ctermbg=0 guibg=lightgrey
