@@ -21,7 +21,7 @@
     bdone = "!f() { git checkout ${1-master} && git up && git bclean ${1-master}; }; f"
 
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesfile = /Users/pesho/.gitignore_global
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
