@@ -1,6 +1,7 @@
 filetype off                   " required!
 
 set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.fzf
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
@@ -33,10 +34,15 @@ Plugin 'godlygeek/tabular'
 Plugin 'vim-scripts/a.vim'
 Plugin 'dkprice/vim-easygrep'
 
+Plugin 'prettier/vim-prettier'
+
 " Typescript-related plugins
 Plugin 'Shougo/vimproc.vim'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'clausreinke/typescript-tools.vim'
+
+" fzf
+Plugin 'junegunn/fzf.vim'
 
 call vundle#end()
 
@@ -441,6 +447,7 @@ if exists(":Tabularize")
     vmap <leader>a= :Tabularize /=<CR>
 endif
 
+nmap <leader>f :FZF<CR>
 
 let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
 if isdirectory(s:clang_library_path)
