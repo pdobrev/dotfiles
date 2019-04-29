@@ -2,49 +2,44 @@ filetype off                   " required!
 
 set rtp+=~/.vim/bundle/Vundle.vim
 set rtp+=~/.fzf
-call vundle#begin()
 
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'vim-scripts/minibufexplorerpp.git'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
-Plugin 'Lokaltog/vim-powerline.git'
-Plugin 'Lokaltog/vim-easymotion.git'
-Plugin 'pangloss/vim-javascript.git'
-Plugin 'mxw/vim-jsx'
-Plugin 'w0rp/ale'
+set guicursor=
 
-Plugin 'duff/vim-scratch.git'
-Plugin 'danro/rename.vim.git'
-Plugin 'scrooloose/nerdcommenter.git'
-Plugin 'scrooloose/nerdtree'
-Plugin 'maksimr/vim-jsbeautify.git'
-Plugin 'majutsushi/tagbar.git'
-Plugin 'kien/ctrlp.vim.git'
-Plugin 'duff/vim-bufonly.git'
-Plugin 'vim-scripts/BufClose.vim.git'
-Plugin 'vim-scripts/vimwiki.git'
-Plugin 'tpope/vim-unimpaired.git'
-Plugin 'kana/vim-textobj-user'
-Plugin 'kana/vim-textobj-entire'
-Plugin 'mileszs/ack.vim'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'jakar/vim-json'
-Plugin 'godlygeek/tabular'
-Plugin 'vim-scripts/a.vim'
-Plugin 'dkprice/vim-easygrep'
 
-Plugin 'prettier/vim-prettier'
+call plug#begin('~/.vim/plugged')
+
+Plug 'VundleVim/Vundle.vim'
+Plug 'vim-scripts/minibufexplorerpp'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'Lokaltog/powerline'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'w0rp/ale'
+
+Plug 'scrooloose/nerdtree'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-entire'
+Plug 'mileszs/ack.vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'jakar/vim-json'
+Plug 'godlygeek/tabular'
+Plug 'vim-scripts/a.vim'
+Plug 'dkprice/vim-easygrep'
+
+Plug 'prettier/vim-prettier'
 
 " Typescript-related plugins
-Plugin 'Shougo/vimproc.vim'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'clausreinke/typescript-tools.vim'
+Plug 'Shougo/deoplete.nvim'
+Plug 'mhartington/nvim-typescript'
 
 " fzf
-Plugin 'junegunn/fzf.vim'
+Plug 'junegunn/fzf.vim'
 
-call vundle#end()
+call plug#end()
+
+let g:deoplete#enable_at_startup = 1
+
 
 " ALE Stuff
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
@@ -229,25 +224,6 @@ autocmd filetype javascript map <S-F9> :ccl<cr>
 autocmd filetype javascript vmap <S-F9> <esc>:ccl<cr>i
 autocmd filetype javascript imap <S-F9> <esc>:ccl<cr>i
 
-" F10 - удалить буфер
-map <F10> :BufClose<cr>
-vmap <F10> <esc>:BufClose<cr>
-imap <F10> <esc>:BufClose<cr>
-
-" F11 - показать окно Taglist
-map <F11> :TlistToggle<cr>
-vmap <F11> <esc>:TlistToggle<cr>
-imap <F11> <esc>:TlistToggle<cr>
-
-" F12 - обозреватель файлов
-map <F12> :Ex<cr>
-vmap <F12> <esc>:Ex<cr>i
-imap <F12> <esc>:Ex<cr>i
-
-map <F8> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-imap <F8> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>a
-imap <C-E> <end>
-
 " < & > - делаем отступы для блоков
 vmap < <gv
 vmap > >gv
@@ -408,18 +384,6 @@ autocmd FileType c,cpp,javascript,java,php,ruby,python autocmd BufWritePre <buff
 " highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " match OverLength /\%81v.\+/
 " set cc=80
-
-
-" vimwiki stuff
-let g:vimwiki_hl_cb_checked = 1
-let g:vimwiki_badsyms = ' '
-let g:vimwiki_folding = 1
-let g:vimwiki_fold_lists = 1
-let g:vimwiki_table_auto_fmt = 1
-let g:vimwiki_list_ignore_newline = 0
-
-
-" nmap ,z :e $HOME/Dropbox\ (Personal)/vimwiki/feedback.wiki<CR>
 
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
