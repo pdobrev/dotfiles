@@ -30,6 +30,7 @@ if [ "$(uname)" == "Darwin" ]; then
 
 else
     alias ls="ls -a --color"
+    source /usr/share/bash-completion/completions/git
 fi
 
 if [ -f ~/.git-completion.bash ]; then

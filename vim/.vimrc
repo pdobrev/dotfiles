@@ -7,9 +7,7 @@ set guicursor=
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'VundleVim/Vundle.vim'
 Plug 'vim-scripts/minibufexplorerpp'
-Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'Lokaltog/powerline'
 Plug 'pangloss/vim-javascript'
@@ -17,15 +15,10 @@ Plug 'mxw/vim-jsx'
 Plug 'w0rp/ale'
 
 Plug 'scrooloose/nerdtree'
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-entire'
 Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'jakar/vim-json'
-Plug 'godlygeek/tabular'
-Plug 'vim-scripts/a.vim'
 Plug 'dkprice/vim-easygrep'
-
 Plug 'prettier/vim-prettier'
 
 " Typescript-related plugins
@@ -37,6 +30,7 @@ else
   Plug 'roxma/nvim-yarp'
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
+
 Plug 'mhartington/nvim-typescript'
 
 " fzf
