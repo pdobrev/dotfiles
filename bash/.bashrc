@@ -1,5 +1,8 @@
 alias mtime="ruby tools/mtime_cache.rb -g .mtime_cache_globs -c .mtime_cache/cache.json"
 
+GPG_TTY=`tty`
+export GPG_TTY
+
 export CLICOLOR=1
 
 export LANG=en_US.UTF-8
@@ -7,8 +10,10 @@ export LANG=en_US.UTF-8
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
+
+# NVIM defaults
 export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
-export EDITOR="vim"
+export EDITOR="nvim"
 
 if [ "$(uname)" == "Darwin" ]; then
     # Mac specific stuff

@@ -5,7 +5,6 @@ set rtp+=~/.fzf
 
 set guicursor=
 
-
 call plug#begin('~/.vim/plugged')
 
 Plug 'VundleVim/Vundle.vim'
@@ -30,7 +29,14 @@ Plug 'dkprice/vim-easygrep'
 Plug 'prettier/vim-prettier'
 
 " Typescript-related plugins
-Plug 'Shougo/deoplete.nvim'
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 Plug 'mhartington/nvim-typescript'
 
 " fzf
@@ -39,7 +45,6 @@ Plug 'junegunn/fzf.vim'
 call plug#end()
 
 let g:deoplete#enable_at_startup = 1
-
 
 " ALE Stuff
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
@@ -62,7 +67,6 @@ set directory=~/.vim/tmp
 " au BufWinEnter * let w:m2=matchadd('OverLength', '\%>81v.\+', -1)
 
 " au GUIEnter * simalt ~x
-
 
 set lazyredraw          " redraw only when we need to.
 
@@ -300,50 +304,6 @@ set wildmenu
 highlight Pmenu guibg=brown gui=bold
 
 
-"""""""""""""
-" functions "
-"""""""""""""
-
-
-""""""""""""""""""""""
-" C++ stuff
-
-autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-
-
-" Add highlighting for function definition in C++
-function! EnhanceSyntax()
-    syn match cppFuncDef "::\~\?\zs\h\w*\ze([^)]*\()\s*\(const\)\?\)\?"
-    syn match cppFuncDef "\~\?\zs\h\w*\ze([^)]*\()\s*\(const\)\?\)\?[\s\t\n]*{"
-    syn match cppClassDef "class \zs\w*\ze[\s\t\n]*{"
-    syn match cppClassDef "\zs\h\w*\ze::"
-"    hi def link cppFuncDef Function
-"     hi def link cppFuncDef Identifier
-    hi def link cppFuncDef Function
-    hi def link cppClassDef Special
-"    hi def link cppClassDef Type
-endfunction
-
-function! IncludeGuard()
-    let guard = toupper( substitute( substitute( expand( '%' ), '\([^.]*\)\.h', '\1_h', '' ), '/', '_', '' ) )
-    call append( '^', '#define ' . guard )
-    +
-    call append( '^', '#ifndef ' . guard )
-    call append( '$', '#endif // ' . guard )
-    +
-endfunction
-
-" Insert an include guard based on the file name on ,i
-nmap ,i :call IncludeGuard()<CR>
-
-"""""""""""""""""
-
-" nmap ,t :CommandT<CR>
-" nmap ,t <C-P>
-
-
-
 """""
 " vimrc
 nmap ,v :e $MYVIMRC<CR>
@@ -401,15 +361,6 @@ nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
-
-" Auto saving
-" autocmd BufLeave,FocusLost * silent! wall
-
-
-if exists(":Tabularize")
-    nmap <leader>a= :Tabularize /=<CR>
-    vmap <leader>a= :Tabularize /=<CR>
-endif
 
 nmap <leader>f :FZF<CR>
 
