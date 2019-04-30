@@ -31,8 +31,6 @@ else
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
-Plug 'mhartington/nvim-typescript'
-
 " fzf
 Plug 'junegunn/fzf.vim'
 
