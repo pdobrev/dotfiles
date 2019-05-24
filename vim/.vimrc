@@ -1,16 +1,13 @@
 filetype off                   " required!
 
-set rtp+=~/.vim/bundle/Vundle.vim
 set rtp+=~/.fzf
 
 set guicursor=
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'vim-scripts/minibufexplorerpp'
 Plug 'tpope/vim-fugitive'
 Plug 'Lokaltog/powerline'
-Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'w0rp/ale'
 
@@ -365,3 +362,4 @@ nnoremap ,d :NERDTreeToggle<cr>
 
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
+
