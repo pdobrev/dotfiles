@@ -352,6 +352,7 @@ set splitright
 
 
 nmap <leader>f :FZF<CR>
+nmap ,f :FZF<CR>
 
 let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
 if isdirectory(s:clang_library_path)
