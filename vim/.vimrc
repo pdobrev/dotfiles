@@ -18,9 +18,14 @@ Plug 'jakar/vim-json'
 Plug 'dkprice/vim-easygrep'
 Plug 'prettier/vim-prettier'
 
+
 " Typescript-related plugins
 
+Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim' " syntax file
+
 if has('nvim')
+  Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
   Plug 'Shougo/deoplete.nvim'
@@ -32,6 +37,9 @@ endif
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
+
+autocmd BufEnter *.tsx set filetype=typescript
+autocmd BufEnter *.ts set filetype=typescript
 
 let g:deoplete#enable_at_startup = 1
 
