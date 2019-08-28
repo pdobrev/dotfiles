@@ -28,6 +28,8 @@ if [ "$(uname)" == "Darwin" ]; then
     export PATH=$PATH:$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin
     export PATH="$HOME/.fastlane/bin:$PATH"
 
+    alias activate_nvm="source $(brew --prefix nvm)/nvm.sh"
+
 else
     alias ls="ls -a --color"
     source /usr/share/bash-completion/completions/git
