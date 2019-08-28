@@ -1,10 +1,8 @@
 alias mtime="ruby tools/mtime_cache.rb -g .mtime_cache_globs -c .mtime_cache/cache.json"
 
-GPG_TTY=`tty`
-export GPG_TTY
-
 export CLICOLOR=1
 
+export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 parse_git_branch() {
@@ -21,15 +19,14 @@ if [ "$(uname)" == "Darwin" ]; then
     alias ls="ls -a"
     # export LSCOLORS=ExFxCxDxBxegedabagacad # Light background
     
-    if [ -f `brew --prefix`/etc/bash_completion ]; then
-    . `brew --prefix`/etc/bash_completion
+    if [ -f /usr/local/share/bash-completion/bash_completion ]; then
+        source /usr/local/share/bash-completion/bash_completion
     fi
 
     export PATH=$PATH:$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin
     export PATH="$HOME/.fastlane/bin:$PATH"
 
     alias activate_nvm="source $(brew --prefix nvm)/nvm.sh"
-
 else
     alias ls="ls -a --color"
     source /usr/share/bash-completion/completions/git
