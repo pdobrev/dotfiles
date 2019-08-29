@@ -19,9 +19,12 @@ if [ "$(uname)" == "Darwin" ]; then
     alias ls="ls -a"
     # export LSCOLORS=ExFxCxDxBxegedabagacad # Light background
     
-    if [ -f /usr/local/share/bash-completion/bash_completion ]; then
-        source /usr/local/share/bash-completion/bash_completion
-    fi
+    # Set up bash completion for git
+    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion || {
+        # if not found in /usr/local/etc, try the brew --prefix location
+            [ -f "$(brew --prefix)/etc/bash_completion.d/git-completion.bash" ] && \
+                . $(brew --prefix)/etc/bash_completion.d/git-completion.bash
+            }
 
     export PATH=$PATH:$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin
     export PATH="$HOME/.fastlane/bin:$PATH"
