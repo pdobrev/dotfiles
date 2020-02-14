@@ -29,7 +29,9 @@ if [ "$(uname)" == "Darwin" ]; then
     export PATH=$PATH:$HOME/Library/Python/2.7/bin:$HOME/Library/Python/3.6/bin
     export PATH="$HOME/.fastlane/bin:$PATH"
 
-    alias activate_nvm="source $(brew --prefix nvm)/nvm.sh"
+    activate-nvm() {
+        source $(brew --prefix nvm)/nvm.sh
+    }
 else
     alias ls="ls -a --color"
     source /usr/share/bash-completion/completions/git
@@ -45,7 +47,6 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$ANDROID_NDK_ROOT:~/bin:/usr/local/bin:$PATH:/usr/local/opt/android-sdk/platform-tools:/usr/local/opt/android-sdk/tools:/usr/local/share/npm/bin
 
 export PATH="/usr/local/sbin:$PATH"
-export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 # added by travis gem
 [ -f /Users/pesho/.travis/travis.sh ] && source /Users/pesho/.travis/travis.sh
@@ -59,5 +60,13 @@ export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 source ~/dotfiles/bash/github.bash
 
+cleanup-git-branches() {
+    git checkout -q master && \
+        git for-each-ref refs/heads/ "--format=%(refname:short)" | \
+        while read branch;\
+        do mergeBase=$(git merge-base master $branch) &&\
+            [[ $(git cherry master $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch;\
+        done
+};
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
