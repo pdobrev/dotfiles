@@ -99,6 +99,7 @@ export LANG=en_US.UTF-8
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+bindkey \^U backward-kill-line
 
 cleanup-git-branches() {
     git checkout -q master && \
