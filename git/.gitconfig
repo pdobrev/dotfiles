@@ -23,7 +23,7 @@
     adv = add -A -v
 
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesfile = ~/.gitignore
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
