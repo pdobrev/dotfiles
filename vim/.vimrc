@@ -372,3 +372,5 @@ nnoremap ,d :NERDTreeToggle<cr>
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
+command! FormatJSON %!python -m json.tool 
+

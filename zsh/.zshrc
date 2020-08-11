@@ -102,6 +102,11 @@ export LANG=en_US.UTF-8
 
 bindkey \^U backward-kill-line
 
+if [ "$(uname 2> /dev/null)" = "Linux" ]; then
+    alias open="xdg-open"
+fi
+
+
 cleanup-git-branches() {
     git checkout -q master && \
         git for-each-ref refs/heads/ "--format=%(refname:short)" | \
