@@ -1,8 +1,16 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
+
+# Set locale for timezone to GB
+
+#Change first day of week to Monday
+export LC_TIME=en_GB.UTF-8
+#Change to metric system
+export LC_MEASUREMENT=en_GB.UTF-8
+
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

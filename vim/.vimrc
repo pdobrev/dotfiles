@@ -15,6 +15,7 @@ call plug#begin()
 Plug 'Lokaltog/powerline'
 Plug 'mxw/vim-jsx'
 Plug 'scrooloose/nerdtree'
+" Plug 'ryanoasis/vim-devicons'
 Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'jakar/vim-json'
