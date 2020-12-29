@@ -1,7 +1,5 @@
 filetype off                   " required!
 
-set rtp+=~/.fzf
-
 set guicursor=
 
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -13,18 +11,13 @@ endif
 call plug#begin()
 
 Plug 'Lokaltog/powerline'
-Plug 'mxw/vim-jsx'
 Plug 'scrooloose/nerdtree'
 " Plug 'ryanoasis/vim-devicons'
 Plug 'mileszs/ack.vim'
-Plug 'airblade/vim-gitgutter'
 Plug 'jakar/vim-json'
-Plug 'dkprice/vim-easygrep'
 Plug 'prettier/vim-prettier'
 
 " Typescript-related plugins
-
-Plug 'leafgarland/typescript-vim'
 
 if has('nvim')
   Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
@@ -37,17 +30,7 @@ else
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
-" fzf
-Plug 'junegunn/fzf.vim'
-
 call plug#end()
-
-autocmd BufEnter *.tsx set filetype=typescript
-autocmd BufEnter *.ts set filetype=typescript
-
-
-
-
 
 " Wrap in try/catch to avoid errors on initial install before plugin is available
 try
@@ -492,9 +475,6 @@ nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
-
-nmap <leader>f :FZF<CR>
-nmap ,f :FZF<CR>
 
 nnoremap ,d :NERDTreeToggle<cr>
 
