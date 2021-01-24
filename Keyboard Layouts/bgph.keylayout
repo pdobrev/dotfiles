@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE keyboard PUBLIC "" "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">
+<?xml version="1.1" encoding="UTF-8"?>
+<!DOCTYPE keyboard SYSTEM "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">
 <!--Created by Ukelele version 2.2.3 on 2012-11-27 at 13:42 (PST)-->
-<!--Last edited by Ukelele version 2.2.3 on 2012-11-27 at 13:56 (PST)-->
-<keyboard group="7" id="19719" name="Bulgarian - Phonetic w/ Rus" maxout="1">
+<!--Last edited by Ukelele version 339 on 2021-01-24 at 11:13 (EET)-->
+<keyboard group="126" id="-31527" name="Bulgarian - Phonetic w/ Rus" maxout="1">
     <layouts>
-        <layout first="0" last="0" modifiers="30" mapSet="138"/>
+        <layout first="0" last="0" mapSet="138" modifiers="30"/>
     </layouts>
     <modifierMap id="30" defaultIndex="0">
         <keyMapSelect mapIndex="0">
@@ -1181,39 +1181,6 @@
         <action id="1">
             <when state="none" next="State 2"/>
         </action>
-        <action id="2">
-            <when state="none" next="State 3"/>
-        </action>
-        <action id="3">
-            <when state="none" output=" "/>
-            <when state="State 1" output="&#x0027;"/>
-            <when state="State 2" output="`"/>
-            <when state="State 3" output="~"/>
-        </action>
-        <action id="4">
-            <when state="none" output="А"/>
-            <when state="State 1" output="Ђ"/>
-        </action>
-        <action id="5">
-            <when state="none" output="Е"/>
-            <when state="State 1" output="Ѓ"/>
-        </action>
-        <action id="6">
-            <when state="none" output="И"/>
-            <when state="State 1" output="Є"/>
-        </action>
-        <action id="7">
-            <when state="none" output="О"/>
-            <when state="State 1" output="Ї"/>
-        </action>
-        <action id="8">
-            <when state="none" output="У"/>
-            <when state="State 1" output="Љ"/>
-        </action>
-        <action id="9">
-            <when state="none" output="Ъ"/>
-            <when state="State 1" output="Њ"/>
-        </action>
         <action id="10">
             <when state="none" output="Ы"/>
             <when state="State 1" output="Ќ"/>
@@ -1254,6 +1221,9 @@
             <when state="none" output="ъ"/>
             <when state="State 1" output="њ"/>
         </action>
+        <action id="2">
+            <when state="none" next="State 3"/>
+        </action>
         <action id="20">
             <when state="none" output="ы"/>
             <when state="State 1" output="ќ"/>
@@ -1293,6 +1263,12 @@
         <action id="29">
             <when state="none" output="э"/>
             <when state="State 2" output="ё"/>
+        </action>
+        <action id="3">
+            <when state="none" output=" "/>
+            <when state="State 1" output="&#x0027;"/>
+            <when state="State 2" output="`"/>
+            <when state="State 3" output="~"/>
         </action>
         <action id="30">
             <when state="none" output="&#x003C;"/>
@@ -1337,6 +1313,10 @@
             <when state="none" output="“"/>
             <when state="State 2" output="&#x0027;"/>
         </action>
+        <action id="4">
+            <when state="none" output="А"/>
+            <when state="State 1" output="Ђ"/>
+        </action>
         <action id="40">
             <when state="none" output="Э"/>
             <when state="State 3" output="Ё"/>
@@ -1368,6 +1348,26 @@
         <action id="47">
             <when state="none" output="J"/>
             <when state="State 3" output="Ј"/>
+        </action>
+        <action id="5">
+            <when state="none" output="Е"/>
+            <when state="State 1" output="Ѓ"/>
+        </action>
+        <action id="6">
+            <when state="none" output="И"/>
+            <when state="State 1" output="Є"/>
+        </action>
+        <action id="7">
+            <when state="none" output="О"/>
+            <when state="State 1" output="Ї"/>
+        </action>
+        <action id="8">
+            <when state="none" output="У"/>
+            <when state="State 1" output="Љ"/>
+        </action>
+        <action id="9">
+            <when state="none" output="Ъ"/>
+            <when state="State 1" output="Њ"/>
         </action>
     </actions>
     <terminators>
