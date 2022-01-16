@@ -134,6 +134,3 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export NVM_DIR=~/.nvm
-source /usr/local/opt/nvm/nvm.sh
-
