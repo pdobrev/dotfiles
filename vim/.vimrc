@@ -12,10 +12,14 @@ call plug#begin()
 
 Plug 'Lokaltog/powerline'
 Plug 'scrooloose/nerdtree'
-" Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'ryanoasis/vim-devicons'
 Plug 'mileszs/ack.vim'
 Plug 'jakar/vim-json'
 Plug 'prettier/vim-prettier'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim' " install ripgrep for :Rg to work https://archlinux.org/packages/community/x86_64/ripgrep/
 
 " Typescript-related plugins
 
@@ -453,31 +457,13 @@ endfun
 autocmd FileType c,cpp,javascript,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
 
-"""""
-" Show visual delimiter at 80
-" highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-" match OverLength /\%81v.\+/
-" set cc=80
-
-
-autocmd BufReadPost fugitive://* set bufhidden=delete
-set wildignore+=client-build,tags
-
-
-"" SPLITS
-
-" Easier split movement
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
 set splitbelow
 set splitright
 
 
 nnoremap ,d :NERDTreeToggle<cr>
 
+nnoremap ,f :Files<cr>
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 

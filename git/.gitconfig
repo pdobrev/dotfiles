@@ -38,3 +38,4 @@
 	required = true
 [push]
 	followTags = true
+
