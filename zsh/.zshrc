@@ -1,10 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/opt/homebrew/bin:$PATH
 
-# MacOS Android studio path
-export PATH="${HOME}/Library/Android/sdk/tools:${HOME}/Library/Android/sdk/platform-tools:${PATH}"
-
-
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
 
@@ -82,7 +78,11 @@ ZSH_THEME="af-magic"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git direnv npm)
+
+export NVM_LAZY_LOAD=true
+export NVM_COMPLETION=true
+
+plugins=(zsh-nvm git direnv npm)
 
 source $ZSH/oh-my-zsh.sh
 
