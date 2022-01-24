@@ -16,6 +16,9 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'prettier/vim-prettier'
 
+" Theme
+Plug 'morhetz/gruvbox'
+
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim' 
 
@@ -28,15 +31,14 @@ let g:coc_global_extensions = [ 'coc-tsserver' ]
 
 filetype plugin indent on
 
-
 nmap <C-n> :NERDTreeToggle<CR>
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
 
 set mouse=nicr
+set cursorline
 set splitbelow
 set splitright
-
 
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|build)|(\.(swp|ico|git|svn))$'
 
@@ -227,13 +229,18 @@ set hidden
 " Buffers listed
 set bl
 
-if has("gui_running")
-    colo inkpot
-    "set guifont=Terminus
-    "set guifont=Screen12
-else
-    colo desert
-endif
+" colo 
+" 
+colo gruvbox
+
+" colo gruvbox
+" if has("gui_running")
+"     colo inkpot
+"     "set guifont=Terminus
+"     "set guifont=Screen12
+" else
+"     colo desert
+" endif
 
 set ic
 set scs
@@ -307,11 +314,6 @@ nmap ,a :A<cr>
 :nmap <F1> :echo<CR>
 :imap <F1> <C-o>:echo<CR>
 
-
-" F2 - быстрое сохранение
-nmap <F2> :w<cr>
-vmap <F2> <esc>:w<cr>i
-imap <F2> <esc>:w<cr>i
 
 " F3 - просмотр ошибок
 nmap <F3> :Buffers<cr>
@@ -398,8 +400,6 @@ nnoremap ,d :NERDTreeToggle<cr>
 
 nnoremap ,f :GFiles<cr>
 nnoremap ,r :Rg<cr>
-
-highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 command! FormatJSON %!python -m json.tool 
 

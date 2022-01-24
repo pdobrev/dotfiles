@@ -1,3 +1,6 @@
+ino|inoremap|around
+cur|computedProperties|buffer
+grub|gruvbox|around
 type|type|tsserver-typescript
 good|goodsName|tsserver-typescript
 ent|entryPoint|tsserver-typescript
