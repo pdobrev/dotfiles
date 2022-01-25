@@ -1,5 +1,9 @@
 {
   "tsserver.log": "verbose",
+  "tsserver.disableAutomaticTypeAcquisition": false,
+
+  "diagnostic.checkCurrentLine": true,
+
   "coc.preferences.formatOnSaveFiletypes": [
     "css",
     "markdown",
@@ -7,12 +11,5 @@
     "typescript",
     "html",
     "json"
-  ],
-  "languageserver": {
-    "godot": {
-      "host": "127.0.0.1",
-      "filetypes": ["gd", "gdscript"],
-      "port": 6008
-    }
-  }
+  ]
 }

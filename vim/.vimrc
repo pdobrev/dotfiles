@@ -31,16 +31,18 @@ let g:coc_global_extensions = [ 'coc-tsserver' ]
 
 filetype plugin indent on
 
-nmap <C-n> :NERDTreeToggle<CR>
-vmap ++ <plug>NERDCommenterToggle
-nmap ++ <plug>NERDCommenterToggle
-
 set mouse=nicr
 set cursorline
 set splitbelow
 set splitright
 
+let g:autoclose_on = 0
+
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|build)|(\.(swp|ico|git|svn))$'
+
+nmap <C-n> :NERDTreeToggle<CR>
+vmap ++ <plug>NERDCommenterToggle
+nmap ++ <plug>NERDCommenterToggle
 
 let g:NERDTreeGitStatusWithFlags = 1
 let g:NERDTreeIgnore = ['^node_modules$']
@@ -49,6 +51,9 @@ let g:NERDTreeIgnore = ['^node_modules$']
 function! IsNERDTreeOpen()
     return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
+
+nnoremap ,d :NERDTreeToggle<cr>
+nnoremap ,n :NERDTreeFind<cr>
 
 " vim-prettier
 "let g:prettier#quickfix_enabled = 0
@@ -229,35 +234,17 @@ set hidden
 " Buffers listed
 set bl
 
-" colo 
-" 
 colo gruvbox
-
-" colo gruvbox
-" if has("gui_running")
-"     colo inkpot
-"     "set guifont=Terminus
-"     "set guifont=Screen12
-" else
-"     colo desert
-" endif
 
 set ic
 set scs
 
 set encoding=utf-8
-" Скрывать указатель мыши, когда печатаем
 set mousehide
-
-" Включить автоотступы
 set autoindent
-
 syntax on
-
 set backspace=indent,eol,start whichwrap+=<,>,[,]
-
 set expandtab
-
 set softtabstop=4
 set tabstop=4
 set shiftwidth=4
@@ -277,22 +264,15 @@ set sessionoptions=curdir,buffers,tabpages
 " Горячие клавишы
 "-------------------------
 
-" Пробел в нормальном режиме перелистывает страницы
-" nmap <Space> <PageDown>
-
-
 " map %% to the current directory if we doing a ':' Ex command
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
 " CTRL-F для omni completion
 imap <C-F> <C-X><C-O>
 
-" C-c and C-v - Copy/Paste в "глобальный клипборд"
+" C-c and C-v - Copy/Paste to global clipboard
 vmap <C-C> "+yi
 imap <C-V> <esc>"+gPi
-
-" Заставляем shift-insert работать как в Xterm
-map <S-Insert> <MiddleMouse>
 
 " C-y - удаление текущей строки
 nmap <C-y> dd
@@ -307,6 +287,8 @@ imap <C-k> <esc>lC
 
 imap <S-Insert> <esc>"+gPi
 
+nnoremap <C-P> :Files<CR>
+
 
 " Быстрое перевключение между .h и .cpp
 nmap ,a :A<cr>
@@ -315,20 +297,11 @@ nmap ,a :A<cr>
 :imap <F1> <C-o>:echo<CR>
 
 
-" F3 - просмотр ошибок
+" F3 - list of buffers
 nmap <F3> :Buffers<cr>
 vmap <F3> <esc>:Buffers<cr>
 imap <F3> <esc>:Buffers<cr>
 
-" F6 - предыдущий буфер
-map <F6> :bp<cr>
-vmap <F6> <esc>:bp<cr>i
-imap <F6> <esc>:bp<cr>i
-
-" F7 - следующий буфер
-map <F7> :bn<cr>
-vmap <F7> <esc>:bn<cr>i
-imap <F7> <esc>:bn<cr>i
 
 " Ctrl-p config
 let g:ctrlp_clear_cache_on_exit = 0
@@ -367,25 +340,14 @@ set complete+=t
 " Включаем filetype плугин. Настройки, специфичные для определынных файлов мы разнесём по разным местам
 filetype plugin on
 
-" Настройки для Tlist (показвать только текущий файл в окне навигации по  коду)
-set completeopt+=longest
-set mps-=[:]
-
-
 au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
 au! BufRead,BufNewFile *.haml         setfiletype haml
 
 """""
-" vimrc
+" vimrc -- shortcut and reloading on change
 "
-
-if has('nvim')
-    nmap ,v :e ~/.config/nvim/init.vim<CR>
-    autocmd! bufwritepost ~/.config/nvim/init.vim source %
-else
-    nmap ,v :e $MYVIMRC<CR>
-    autocmd! bufwritepost $MYVIMRC source %
-endif
+nmap ,v :e ~/.vimrc<CR>
+autocmd! bufwritepost ~/.vimrc source %
 
 set noerrorbells
 set visualbell
@@ -396,7 +358,6 @@ set langmap=АБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЪЗ;ABCDEFGHIJKLMNO
 set splitbelow
 set splitright
 
-nnoremap ,d :NERDTreeToggle<cr>
 
 nnoremap ,f :GFiles<cr>
 nnoremap ,r :Rg<cr>
