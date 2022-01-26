@@ -41,6 +41,9 @@ let g:autoclose_on = 0
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|build)|(\.(swp|ico|git|svn))$'
 
 nmap <C-n> :NERDTreeToggle<CR>
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
 
@@ -281,10 +284,6 @@ imap <C-y> <esc>ddi
 " C-d - дублирование текущей строки
 imap <C-d> <esc>yypi
 
-" C-k - как в имакз'е
-nmap <C-k> d$
-imap <C-k> <esc>lC
-
 imap <S-Insert> <esc>"+gPi
 
 nnoremap <C-P> :Files<CR>
@@ -347,7 +346,7 @@ au! BufRead,BufNewFile *.haml         setfiletype haml
 " vimrc -- shortcut and reloading on change
 "
 nmap ,v :e ~/.vimrc<CR>
-autocmd! bufwritepost ~/.vimrc source %
+autocmd! bufwritepost ~/.vimrc source ~/.config/nvim/init.vim
 
 set noerrorbells
 set visualbell
