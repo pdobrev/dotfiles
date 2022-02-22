@@ -1,6 +1,7 @@
 {
   "tsserver.log": "verbose",
   "tsserver.disableAutomaticTypeAcquisition": false,
+  "typescript.preferences.importModuleSpecifier": "relative",
 
   "diagnostic.checkCurrentLine": true,
 

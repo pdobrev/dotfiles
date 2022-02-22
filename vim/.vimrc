@@ -15,6 +15,9 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'prettier/vim-prettier'
+Plug 'jiangmiao/auto-pairs'
+
+Plug 'chrisbra/csv.vim'
 
 " Theme
 Plug 'morhetz/gruvbox'
@@ -44,6 +47,7 @@ nmap <C-n> :NERDTreeToggle<CR>
 
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
+let NERDSpaceDelims=1
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
 
@@ -79,7 +83,6 @@ let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclu
 
 " coc config
 let g:coc_global_extensions = [
-  \ 'coc-pairs',
   \ 'coc-tsserver',
   \ 'coc-prettier',
   \ 'coc-json',
