@@ -70,10 +70,6 @@ command! -nargs=0 Prettier :CocCommand prettier.formatFile
 " run prettier on save
 
 
-" ctrlp
-let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
-
-
 """""""""
 " COC Setup
 """""""""
@@ -101,13 +97,6 @@ set shortmess+=c
 set signcolumn=yes
 
 " Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
@@ -118,7 +107,15 @@ inoremap <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+inoremap <silent><expr> <TAB>
+            \ coc#pum#visible() ? coc#pum#next(1):
+            \ <SID>check_back_space() ? "\<Tab>" :
+            \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+
 " Or use `complete_info` if your vim support it, like:
 " inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 
@@ -305,45 +302,11 @@ vmap <F3> <esc>:Buffers<cr>
 imap <F3> <esc>:Buffers<cr>
 
 
-" Ctrl-p config
-let g:ctrlp_clear_cache_on_exit = 0
-if exists("g:ctrl_user_command")
-  unlet g:ctrlp_user_command
-endif
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/vendor/*,*/\.git/*
-
-
-" < & > - делаем отступы для блоков
 vmap < <gv
 vmap > >gv
 
-function! InsertTabWrapper()
-     let col = col('.') - 1
-     if !col || getline('.')[col - 1] !~ '\k'
-         return "\<tab>"
-     else
-         return "\<c-p>"
-     endif
-endfunction
-
-imap <tab> <c-r>=InsertTabWrapper()<cr>
-
-" Слова откуда будем завершать
-set complete=""
-" Из текущего буфера
-set complete+=.
-" Из словаря
-set complete+=k
-" Из других открытых буферов
-set complete+=b
-" из тегов
-set complete+=t
-
 " Включаем filetype плугин. Настройки, специфичные для определынных файлов мы разнесём по разным местам
 filetype plugin on
-
-au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
-au! BufRead,BufNewFile *.haml         setfiletype haml
 
 """""
 " vimrc -- shortcut and reloading on change
