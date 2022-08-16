@@ -16,7 +16,6 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'prettier/vim-prettier'
 Plug 'jiangmiao/auto-pairs'
-
 Plug 'chrisbra/csv.vim'
 
 " Theme
@@ -40,8 +39,6 @@ set splitbelow
 set splitright
 
 let g:autoclose_on = 0
-
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|build)|(\.(swp|ico|git|svn))$'
 
 nmap <C-n> :NERDTreeToggle<CR>
 
