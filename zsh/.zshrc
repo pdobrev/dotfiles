@@ -1,5 +1,6 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/opt/homebrew/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH
+
 
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
@@ -10,7 +11,6 @@ export ZSH="${HOME}/.oh-my-zsh"
 export LC_TIME=en_GB.UTF-8
 #Change to metric system
 export LC_MEASUREMENT=en_GB.UTF-8
-
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -136,4 +136,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 alias vim=nvim
+alias mc="mc --nosubshell"
 

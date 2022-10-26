@@ -15,11 +15,15 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'prettier/vim-prettier'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 Plug 'chrisbra/csv.vim'
+Plug 'github/copilot.vim'
 
 " Theme
 Plug 'morhetz/gruvbox'
+
+Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+Plug 'nvim-tree/nvim-tree.lua'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim' 
@@ -27,6 +31,14 @@ Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 
 call plug#end()
+
+lua require('local')
+
+" Copilot stuff from Jake's set up
+let g:copilot_no_tab_map = v:true
+let g:copilot_assume_mapped = v:true
+imap <silent><script><expr> <C-y> copilot#Accept('\<CR>')
+let g:copilot_no_tab_map = v:true
 
 
 let g:coc_global_extensions = [ 'coc-tsserver' ]
@@ -39,8 +51,6 @@ set splitbelow
 set splitright
 
 let g:autoclose_on = 0
-
-nmap <C-n> :NERDTreeToggle<CR>
 
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
@@ -56,8 +66,8 @@ function! IsNERDTreeOpen()
     return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
-nnoremap ,d :NERDTreeToggle<cr>
-nnoremap ,n :NERDTreeFind<cr>
+nnoremap ,d :NvimTreeToggle<cr>
+nnoremap ,n :NvimTreeFocus<cr>
 
 " vim-prettier
 "let g:prettier#quickfix_enabled = 0
@@ -78,7 +88,9 @@ command! -nargs=0 Prettier :CocCommand prettier.formatFile
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
   \ 'coc-prettier',
+  \ 'coc-pyright',
   \ 'coc-json',
+  \ 'coc-eslint',
   \ ]
 
 
@@ -274,13 +286,6 @@ imap <C-F> <C-X><C-O>
 vmap <C-C> "+yi
 imap <C-V> <esc>"+gPi
 
-" C-y - удаление текущей строки
-nmap <C-y> dd
-imap <C-y> <esc>ddi
-
-" C-d - дублирование текущей строки
-imap <C-d> <esc>yypi
-
 imap <S-Insert> <esc>"+gPi
 
 nnoremap <C-P> :Files<CR>
@@ -315,7 +320,10 @@ set noerrorbells
 set visualbell
 set t_vb=
 
-set langmap=АБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЪЗ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,абцдефгхийклмнопярстужвьъз;abcdefghijklmnopqrstuvwxyz
+" set langmap=АБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЪЗ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,абцдефгхийклмнопярстужвьъз;abcdefghijklmnopqrstuvwxyz
+" set keymap=bulgarian-phonetic
+" set iminsert=0 imsearch=-1
+
 
 set splitbelow
 set splitright
@@ -324,5 +332,11 @@ set splitright
 nnoremap ,f :GFiles<cr>
 nnoremap ,r :Rg<cr>
 
-command! FormatJSON %!python -m json.tool 
+command! FormatJSON %!python3 -m json.tool 
+
+" Escape from terminal insert mode into normal via Esc
+" Having it bound to just Esc messes up :Rg and :GFiles
+if has('nvim')
+    tnoremap <C-v><Esc> <C-\><C-n>
+endif
 

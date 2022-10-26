@@ -1,7 +1,11 @@
 {
   "dependencies": {
+    "coc-eslint": ">=1.5.8",
     "coc-json": ">=1.4.1",
     "coc-prettier": ">=1.1.25",
+    "coc-pyright": ">=1.1.267",
     "coc-tsserver": ">=1.9.8"
-  }
+  },
+  "disabled": [],
+  "locked": []
 }

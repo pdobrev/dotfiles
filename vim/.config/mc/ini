@@ -83,11 +83,11 @@ editor_backup_extension=~
 editor_filesize_threshold=64M
 editor_stop_format_chars=-+*\\,.;:&>
 mcview_eof=
-skin=default
+skin=julia256
 
 [Layout]
 output_lines=0
-left_panel_size=130
+left_panel_size=128
 top_panel_size=0
 message_visible=true
 keybar_visible=true
@@ -115,6 +115,8 @@ base_color=
 xterm-256color=
 color_terminals=
 
+xterm-kitty=
+
 [Panels]
 show_mini_info=true
 kilobyte_si=false
@@ -135,6 +137,8 @@ permission_mode=false
 torben_fj_mode=false
 quick_search_mode=2
 select_flags=6
+
+simple_swap=false
 
 [Panelize]
 Find *.orig after patching=find . -name \\*.orig -print
