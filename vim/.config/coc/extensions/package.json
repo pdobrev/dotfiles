@@ -4,8 +4,10 @@
     "coc-json": ">=1.4.1",
     "coc-prettier": ">=1.1.25",
     "coc-pyright": ">=1.1.267",
-    "coc-tsserver": ">=1.9.8"
+    "coc-tsserver": ">=1.9.8",
+    "coc-sourcekit": ">=0.0.3"
   },
   "disabled": [],
-  "locked": []
+  "locked": [],
+  "lastUpdate": 1703607071166
 }

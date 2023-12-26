@@ -10,12 +10,7 @@ endif
 call plug#begin()
 
 Plug 'Lokaltog/powerline'
-Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'ryanoasis/vim-devicons'
-Plug 'prettier/vim-prettier'
-" Plug 'jiangmiao/auto-pairs'
 Plug 'chrisbra/csv.vim'
 Plug 'github/copilot.vim'
 
@@ -58,16 +53,8 @@ let NERDSpaceDelims=1
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
 
-let g:NERDTreeGitStatusWithFlags = 1
-let g:NERDTreeIgnore = ['^node_modules$']
-" sync open file with NERDTree
-" " Check if NERDTree is open or active
-function! IsNERDTreeOpen()
-    return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
-
 nnoremap ,d :NvimTreeToggle<cr>
-nnoremap ,n :NvimTreeFocus<cr>
+nnoremap ,n :NvimTreeFindFile<cr>
 
 " vim-prettier
 "let g:prettier#quickfix_enabled = 0
@@ -269,18 +256,8 @@ set smartindent
 " Fix <Enter> for comment
 set fo+=cr
 
-" Опции сесссий
-set sessionoptions=curdir,buffers,tabpages
-
-"-------------------------
-" Горячие клавишы
-"-------------------------
-
 " map %% to the current directory if we doing a ':' Ex command
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
-
-" CTRL-F для omni completion
-imap <C-F> <C-X><C-O>
 
 " C-c and C-v - Copy/Paste to global clipboard
 vmap <C-C> "+yi
@@ -288,21 +265,13 @@ imap <C-V> <esc>"+gPi
 
 imap <S-Insert> <esc>"+gPi
 
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
 nnoremap <C-P> :Files<CR>
-
-
-" Быстрое перевключение между .h и .cpp
-nmap ,a :A<cr>
-
-:nmap <F1> :echo<CR>
-:imap <F1> <C-o>:echo<CR>
-
 
 " F3 - list of buffers
 nmap <F3> :Buffers<cr>
 vmap <F3> <esc>:Buffers<cr>
 imap <F3> <esc>:Buffers<cr>
-
 
 vmap < <gv
 vmap > >gv
@@ -329,7 +298,7 @@ set splitbelow
 set splitright
 
 
-nnoremap ,f :GFiles<cr>
+nnoremap ,f :GFiles --cached --others --exclude-standard<cr>
 nnoremap ,r :Rg<cr>
 
 command! FormatJSON %!python3 -m json.tool 
@@ -339,4 +308,3 @@ command! FormatJSON %!python3 -m json.tool
 if has('nvim')
     tnoremap <C-v><Esc> <C-\><C-n>
 endif
-

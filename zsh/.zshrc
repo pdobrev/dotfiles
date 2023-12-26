@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH
+export PATH=/opt/homebrew/anaconda3/bin:$HOME/Library/Python/3.11/bin:$HOME/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH
 
 
 # Path to your oh-my-zsh installation.
@@ -130,11 +130,17 @@ cleanup-git-branches() {
 };
 
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 alias vim=nvim
 alias mc="mc --nosubshell"
+alias ssh="kitty +kitten ssh"
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 
+
+# bun completions
+[ -s "/Users/pesho/.bun/_bun" ] && source "/Users/pesho/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"

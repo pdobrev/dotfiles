@@ -164,9 +164,9 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- Additional Plugins
 lvim.plugins = {
-    {
+  {
     'ellisonleao/gruvbox.nvim'
-    },
+  },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
