@@ -1,4 +1,4 @@
-# Common recent settings file for Wireshark 4.0.1.
+# Common recent settings file for Wireshark 4.2.5.
 #
 # This file is regenerated each time Wireshark is quit
 # and when changing configuration profile.
@@ -7,21 +7,28 @@
 ######## Recent capture files (latest last), cannot be altered through command line ########
 
 
-######## Recent capture filters (latest last), cannot be altered through command line ########
+######## Recent capture filters (latest first), cannot be altered through command line ########
 
 
 ######## Recent display filters (latest last), cannot be altered through command line ########
 
+recent.display_filter: (((ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)) && !(_ws.col.protocol == "DNS")) && !(ip.dst == 103.107.90.245)
+recent.display_filter: tcp.stream eq 112
+recent.display_filter: (ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)
+recent.display_filter: (ip.addr != 103.107.90.245) && !(ip.dst == 103.107.90.41)
+recent.display_filter: ip.addr != 103.107.90.245
+recent.display_filter: ip.addr != 192.0.2.1
+recent.display_filter: tcp.stream eq 45
+recent.display_filter: tcp.stream eq 28
+recent.display_filter: ((ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)) && !(_ws.col.protocol == "DNS")
 recent.display_filter: tcp.stream eq 2
-recent.display_filter: tcp.stream eq 0
-recent.display_filter: tcp.stream eq 7
 
 # Main window geometry.
 # Decimal numbers.
-gui.geometry_main_x: 50
-gui.geometry_main_y: 50
-gui.geometry_main_width: 1410
-gui.geometry_main_height: 838
+gui.geometry_main_x: 284
+gui.geometry_main_y: 130
+gui.geometry_main_width: 1352
+gui.geometry_main_height: 815
 
 # Main window maximized.
 # TRUE or FALSE (case-insensitive).
@@ -30,14 +37,6 @@ gui.geometry_main_maximized: FALSE
 # Leftalign Action Buttons.
 # TRUE or FALSE (case-insensitive).
 gui.geometry_leftalign_actions: FALSE
-
-# Statusbar left pane size.
-# Decimal number.
-gui.geometry_status_pane: 250
-
-# Statusbar middle pane size.
-# Decimal number.
-gui.geometry_status_pane_right: 250
 
 # Last used Configuration Profile.
 gui.last_used_profile: Default
@@ -69,6 +68,15 @@ gui.search_case_sensitive: FALSE
 # Find packet search type.
 # One of: DISPLAY_FILTER, HEX_VALUE, STRING, REGEX
 gui.search_type: DISPLAY_FILTER
+
+# Geometry and maximized state of PacketDialog window.
+# Decimal integers.
+gui.geom.PacketDialog.x: 126
+gui.geom.PacketDialog.y: 104
+gui.geom.PacketDialog.width: 1081
+gui.geom.PacketDialog.height: 652
+# TRUE or FALSE (case-insensitive).
+gui.geom.PacketDialog.maximized: FALSE
 
 # Geometry and maximized state of FollowStreamDialog window.
 # Decimal integers.

@@ -25,6 +25,11 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
+
+" Swift stuff
+Plug 'keith/swift.vim'
+Plug 'mhartington/formatter.nvim'
 call plug#end()
 
 lua require('local')
@@ -52,6 +57,9 @@ let g:NERDDefaultAlign = 'left'
 let NERDSpaceDelims=1
 vmap ++ <plug>NERDCommenterToggle
 nmap ++ <plug>NERDCommenterToggle
+
+"vmap ++ gc
+"nmap ++ gcc
 
 nnoremap ,d :NvimTreeToggle<cr>
 nnoremap ,n :NvimTreeFindFile<cr>

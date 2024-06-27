@@ -19,6 +19,7 @@
     wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
     bclean = "!f() { git checkout ${1-master} && git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d; }; f"
     bdone = "!f() { git checkout ${1-master} && git up && git bclean ${1-master}; }; f"
+    bprune = "!f() { git checkout -q ${1-master} && git for-each-ref refs/heads/ \"--format=%(refname:short)\" | while read branch; do mergeBase=$(git merge-base ${1-master} $branch) && [[ $(git cherry ${1-master} $(git commit-tree $(git rev-parse \"$branch^{tree}\") -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done; }; f"
 
     adv = add -A -v
 

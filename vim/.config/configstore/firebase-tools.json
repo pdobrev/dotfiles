@@ -1,0 +1,45 @@
+{
+	"motd": {
+		"cloudBuildErrorAfter": 1594252800000,
+		"cloudBuildWarnAfter": 1590019200000,
+		"defaultNode10After": 1594252800000,
+		"minVersion": "3.0.5",
+		"node8DeploysDisabledAfter": 1613390400000,
+		"node8RuntimeDisabledAfter": 1615809600000,
+		"node8WarnAfter": 1600128000000,
+		"fetched": 1715438861440
+	},
+	"usage": true,
+	"analytics-uuid": "5610097e-3e1c-4b25-b144-561571a99e4d",
+	"user": {
+		"iss": "accounts.google.com",
+		"azp": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"aud": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"sub": "117217737128101785472",
+		"hd": "indexedinc.com",
+		"email": "petar@indexedinc.com",
+		"email_verified": true,
+		"at_hash": "Ok8KzjIdtnIcyQIHzUgeAw",
+		"iat": 1715438882,
+		"exp": 1715442482
+	},
+	"tokens": {
+		"expires_at": 1715442481926,
+		"access_token": "ya29.a0AXooCgtCbof7RFTjzL7FQirF6Y9oLF9p4VQpr7w6i_uukvyWK20PgbqRG1klQiUU7MsZcbxMsF-Dwslynq_ujJcL5ljuOCD8l6n_kYzzsPhiCUAz0pjyo5jcOd8d6Y8D50fAI1mC9GLpt5yzW-QWnMZvJGsg5WaY2zZlB9xsAAaCgYKAY4SARISFQHGX2MiWIyQ9aO8i9nlu202ZBqEYA0177",
+		"expires_in": 3599,
+		"refresh_token": "1//03wA79k9vDxIiCgYIARAAGAMSNwF-L9IrQPLC-JJAIcTA5irFMstm47BAN9geNORTM62VUTINShoBMX0Xxp3WdVUWbvPA-Jh7F9E",
+		"scope": "openid https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase https://www.googleapis.com/auth/userinfo.email",
+		"token_type": "Bearer",
+		"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImEzYjc2MmY4NzFjZGIzYmFlMDA0NGM2NDk2MjJmYzEzOTZlZGEzZTMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE3MjE3NzM3MTI4MTAxNzg1NDcyIiwiaGQiOiJpbmRleGVkaW5jLmNvbSIsImVtYWlsIjoicGV0YXJAaW5kZXhlZGluYy5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6Ik9rOEt6aklkdG5JY3lRSUh6VWdlQXciLCJpYXQiOjE3MTU0Mzg4ODIsImV4cCI6MTcxNTQ0MjQ4Mn0.PlVkSxOovZESkhm361-zv0O11Rp3zc6r8zLFp2yziiZIsVYt2l__zvATHfwv1e9DuEShn4Do13Ke7Rv63Fihu7BWQHcfbdgOEvKESGre4TW2YV608wAiLULNhJ6GuSs13oxbwlRnuyBa0V2X_wM0V8okF6YE3Okv7npI7NvqyrBKTnxwBuQbcV2PHAOq20q0l2MABrvJQQlH83nevZJHUOiPZoGolyQSVQfyprQ71-lowo67S1tSlkJIf_zenJelJkkf8dqEs5AjoPsLG6RK9B-Y5vbDkVb93jIJ_9MQbGGS9ss1z1HaZnb15Mc1o48gNBTZTKa64wzRQfPHMM6X8A"
+	},
+	"activeProjects": {
+		"/Users/pesho/src/txtclub/games/smsrdle": "txtclub-analytics-52295"
+	},
+	"emulator-analytics-clientId": "79c463f2-3250-48c7-a8f2-25a621f0b0bd",
+	"adminsdkconfig": {
+		"txtclub-analytics-52295": {
+			"projectId": "txtclub-analytics-52295",
+			"storageBucket": "txtclub-analytics-52295.appspot.com"
+		}
+	}
+}

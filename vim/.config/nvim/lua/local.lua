@@ -7,3 +7,25 @@
 -- empty setup using defaults
 require("nvim-tree").setup()
 
+-- Format Swift on save.
+require('formatter').setup({
+  filetype = {
+    swift = {
+      -- SwiftFormat
+      function()
+        return {
+          exe = "swiftformat",
+          args = {},
+          stdin = true
+        }
+      end
+    }
+  }
+})
+
+vim.api.nvim_exec([[
+  augroup FormatAutogroup
+    autocmd!
+    autocmd BufWritePost *.swift FormatWrite
+  augroup END
+]], true)
