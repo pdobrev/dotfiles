@@ -8,8 +8,7 @@ fi
 . ~/.profile
 
 export LC_TIME=en_GB.UTF-8
-export LC_MEASUREMENT=en_GB.UTF-8
-export LANG=en_US.UTF-8
+export LC_MEASUREMENT=en_GB.UTF-8 export LANG=en_US.UTF-8
 export EDITOR=nvim
 
 bindkey \^U backward-kill-line
@@ -48,3 +47,6 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
