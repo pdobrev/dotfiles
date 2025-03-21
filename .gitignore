@@ -12,3 +12,5 @@ json-schema-cache/
 github-copilot/hosts.json
 firebase/*_credentials.json
 vim/.config/github-copilot/*
+vim/.config/gcloud/*
+vim/.config/zed/*

@@ -12,6 +12,7 @@
 
 ######## Recent display filters (latest last), cannot be altered through command line ########
 
+recent.display_filter: tcp.stream eq 11
 recent.display_filter: (((ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)) && !(_ws.col.protocol == "DNS")) && !(ip.dst == 103.107.90.245)
 recent.display_filter: tcp.stream eq 112
 recent.display_filter: (ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)
@@ -21,14 +22,13 @@ recent.display_filter: ip.addr != 192.0.2.1
 recent.display_filter: tcp.stream eq 45
 recent.display_filter: tcp.stream eq 28
 recent.display_filter: ((ip.addr != 103.107.90.245) && !(ip.addr == 103.107.90.41)) && !(_ws.col.protocol == "DNS")
-recent.display_filter: tcp.stream eq 2
 
 # Main window geometry.
 # Decimal numbers.
-gui.geometry_main_x: 284
-gui.geometry_main_y: 130
-gui.geometry_main_width: 1352
-gui.geometry_main_height: 815
+gui.geometry_main_x: 0
+gui.geometry_main_y: 35
+gui.geometry_main_width: 960
+gui.geometry_main_height: 768
 
 # Main window maximized.
 # TRUE or FALSE (case-insensitive).

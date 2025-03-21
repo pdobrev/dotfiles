@@ -50,3 +50,44 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# In ~/.zshrc
+export HISTFILESIZE=1000000
+export HISTSIZE=1000000
+export HISTFILE=~/.zsh_history
+
+setopt HIST_FIND_NO_DUPS
+# following should be turned off, if sharing history via setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/pesho/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pesho/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# Lazy-load gcloud completion
+if [ -f '/Users/pesho/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then
+  _gcloud_lazy_completion() {
+    # Initialize bash completion compatibility
+    autoload -U +X bashcompinit && bashcompinit
+    # Source the gcloud completion script
+    source '/Users/pesho/Downloads/google-cloud-sdk/completion.zsh.inc'
+    # Remove the lazy loader function after sourcing
+    unfunction _gcloud_lazy_completion
+    # Restart completion
+    compdef gcloud
+    compcall
+  }
+  # Associate the lazy loader with gcloud command completion
+  compdef _gcloud_lazy_completion gcloud
+fi
+
+# add Pulumi to the PATH
+export PATH=$HOME/.local/bin:$PATH
+
+
+# pnpm
+export PNPM_HOME="/Users/pesho/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

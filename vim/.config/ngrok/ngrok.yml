@@ -1,0 +1,8 @@
+version: 3
+tunnels:
+  app1:
+    addr: localhost:8080
+    proto: http
+  app2:
+    addr: localhost:8081
+    proto: http

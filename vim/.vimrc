@@ -27,12 +27,16 @@ Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 
+Plug 'joshuavial/aider.nvim'
+
 " Swift stuff
 Plug 'keith/swift.vim'
 Plug 'mhartington/formatter.nvim'
 call plug#end()
 
 lua require('local')
+
+lua require('aider').setup({ auto_manage_context = false, default_bindings = false })
 
 " Copilot stuff from Jake's set up
 let g:copilot_no_tab_map = v:true

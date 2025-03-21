@@ -12,5 +12,6 @@
     "x86_64-apple-macosx14.0"
   ],
 
-  "coc.preferences.formatOnSave": true
+  "coc.preferences.formatOnSave": true,
+  "eslint.autoFixOnSave": true
 }
