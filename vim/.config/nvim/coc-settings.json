@@ -5,13 +5,6 @@
 
   "diagnostic.checkCurrentLine": true,
 
-  "sourcekit.args": [
-    "-Xswiftc",
-    "-target",
-    "-Xswiftc",
-    "x86_64-apple-macosx14.0"
-  ],
-
   "coc.preferences.formatOnSave": true,
   "eslint.autoFixOnSave": true
 }

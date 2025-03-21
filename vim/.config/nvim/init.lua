@@ -45,8 +45,6 @@ require("lazy").setup({
   -- LSP and completion
   { "neoclide/coc.nvim", branch = "release" },
   
-  -- Swift
-  { "keith/swift.vim" },
   { "mhartington/formatter.nvim" },
 })
 
@@ -144,28 +142,6 @@ vim.api.nvim_create_user_command('FormatJSON', '%!python3 -m json.tool', {})
 -- Setup aider.nvim
 require('aider').setup({ auto_manage_context = false, default_bindings = false })
 
--- Load formatter for Swift
-require('formatter').setup({
-  filetype = {
-    swift = {
-      function()
-        return {
-          exe = "swiftformat",
-          args = {},
-          stdin = true
-        }
-      end
-    }
-  }
-})
-
--- Format Swift on save
-vim.api.nvim_exec([[
-  augroup FormatAutogroup
-    autocmd!
-    autocmd BufWritePost *.swift FormatWrite
-  augroup END
-]], true)
 
 -- COC Configuration
 vim.g.coc_global_extensions = {
