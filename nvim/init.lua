@@ -31,7 +31,7 @@ require("lazy").setup({
       vim.fn.system({ "bash", "-c", vim.fn.stdpath("data") .. "/lazy/fzf/install --all" })
     end 
   },
-  { "junegunn/fzf.vim", dependencies = { "junegunn/fzf" } },
+  { "junegunn/fzf.vim" },
   { "scrooloose/nerdcommenter" },
   { "github/copilot.vim" },
   { "chrisbra/csv.vim" },
@@ -48,16 +48,11 @@ require("lazy").setup({
   { "hrsh7th/cmp-nvim-lsp" },
   { "hrsh7th/cmp-buffer" },
   { "hrsh7th/cmp-path" },
+  { "hrsh7th/cmp-cmdline" },
   { "L3MON4D3/LuaSnip" },
   { "saadparwaiz1/cmp_luasnip" },
-  
-  { "nvim-telescope/telescope.nvim", 
-    dependencies = { "nvim-lua/plenary.nvim" }
-  },
-  
-  { "jose-elias-alvarez/null-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-  },
+  { "stevearc/conform.nvim" },
+  { "ray-x/lsp_signature.nvim" },
 })
 
 -- General settings
@@ -66,12 +61,14 @@ vim.opt.cursorline = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.clipboard = "unnamed"
+vim.opt.signcolumn = "yes" -- Always show the sign column to prevent text shifting
 
 -- Create directory for swap files if it doesn't exist
 local swap_dir = vim.fn.expand("~/.vim/tmp")
 if vim.fn.isdirectory(swap_dir) == 0 then
   vim.fn.mkdir(swap_dir, "p")
 end
+
 vim.opt.directory = swap_dir
 vim.opt.lazyredraw = true
 vim.opt.ruler = true
@@ -82,7 +79,6 @@ vim.opt.hlsearch = false
 vim.opt.scrolljump = 7
 vim.opt.scrolloff = 7
 vim.opt.visualbell = false
--- termencoding is obsolete in Neovim
 vim.opt.hidden = true
 vim.opt.buflisted = true
 vim.opt.ignorecase = true
@@ -97,7 +93,6 @@ vim.opt.shiftwidth = 4
 vim.opt.formatoptions:append("cr")
 vim.opt.errorbells = false
 vim.opt.visualbell = true
--- t_vb is a terminal option not needed in Neovim
 
 -- Set colorscheme
 vim.cmd("colorscheme gruvbox")
@@ -154,66 +149,68 @@ vim.api.nvim_create_user_command('FormatJSON', '%!python3 -m json.tool', {})
 -- Setup aider.nvim
 require('aider').setup({ auto_manage_context = false, default_bindings = false })
 
--- Setup Telescope
-require('telescope').setup {
-  defaults = {
-    file_ignore_patterns = { "node_modules", ".git" },
-    mappings = {
-      i = {
-        ["<esc>"] = require('telescope.actions').close
-      },
-    },
-  },
-}
-
--- Add Telescope key mappings
-vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope find_files<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { noremap = true, silent = true })
-
 -- LSP Configuration
 local lspconfig = require('lspconfig')
 
--- Common capabilities including nvim-cmp
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- Common LSP setup
+local on_attach = function(client, bufnr)
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
--- Setup LSP servers
-local servers = {
-  'pyright', -- Python
-  'ts_ls', -- TypeScript
-  'jsonls', -- JSON
-  'eslint', -- ESLint
-}
-
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    capabilities = capabilities,
-  }
+  -- Mappings
+  local opts = { noremap = true, silent = true, buffer = bufnr }
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+  vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts) -- signature help in insert mode too
+  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+  vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+  vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, opts)
+  
+  -- Diagnostics
+  vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, opts)
+  vim.keymap.set('n', ']g', vim.diagnostic.goto_next, opts)
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+  
+  -- Format on save is now handled by conform.nvim
+  
+  -- Highlight references on cursor hold
+  if client.server_capabilities.documentHighlightProvider then
+    vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
+    vim.api.nvim_create_autocmd("CursorHold", {
+      group = "lsp_document_highlight",
+      buffer = bufnr,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd("CursorMoved", {
+      group = "lsp_document_highlight",
+      buffer = bufnr,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end
+  
+  -- Setup lsp_signature for a gentler signature help experience
+  require("lsp_signature").on_attach({
+    bind = true,
+    handler_opts = {
+      border = "rounded"
+    },
+    hint_enable = false,          -- Disable virtual text hints
+    floating_window = true,       -- Use floating window for signature
+    always_trigger = false,       -- Don't show signature help automatically for every char
+    floating_window_above_cur_line = true,
+    close_timeout = 4000,         -- Close after 4 seconds of inactivity
+    toggle_key = '<C-k>',         -- Toggle signature with the same key as manual trigger
+    select_signature_key = '<C-n>', -- Cycle between signatures
+  }, bufnr)
 end
 
--- LSP keybindings (similar to what we had with CoC)
-vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'gy', '<cmd>lua vim.lsp.buf.type_definition()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>a', '<cmd>lua vim.lsp.buf.code_action()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ']g', '<cmd>lua vim.diagnostic.goto_next()<CR>', { noremap = true, silent = true })
-
--- Setup diagnostics
-vim.diagnostic.config({
-  virtual_text = true,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-  severity_sort = true,
-})
-
--- nvim-cmp setup
+-- Setup nvim-cmp
 local cmp = require('cmp')
 local luasnip = require('luasnip')
 
@@ -248,28 +245,91 @@ cmp.setup({
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+  }, {
     { name = 'buffer' },
     { name = 'path' },
   }),
 })
 
--- Setup formatting via null-ls
-local null_ls = require("null-ls")
-null_ls.setup({
+-- Setup cmdline completion
+cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = {
-    null_ls.builtins.formatting.prettier,
+    { name = 'buffer' }
+  }
+})
+
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
+-- Setup LSP capabilities with nvim-cmp
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- Initialize language servers
+-- Use typescript-language-server
+require('lspconfig').ts_ls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  -- Import preferences from coc-settings
+  settings = {
+    typescript = {
+      preferences = {
+        importModuleSpecifier = "relative"
+      }
+    }
+  }
+})
+
+-- Setup conform.nvim for formatting
+require("conform").setup({
+  formatters_by_ft = {
+    javascript = { "prettier" },
+    typescript = { "prettier" },
+    json = { "prettier" },
+    html = { "prettier" },
+    css = { "prettier" },
+  },
+  format_on_save = {
+    -- These options will be passed to conform.format()
+    timeout_ms = 500,
+    lsp_fallback = true,
+    async = true, -- Async formatting
   },
 })
 
--- Create Format command (similar to CoC)
-vim.api.nvim_create_user_command('Format', function()
-  vim.lsp.buf.format({ async = true })
+-- Diagnostic config similar to coc
+vim.diagnostic.config({
+  virtual_text = { 
+    prefix = '■', -- Use a visible marker for virtual text
+    spacing = 2,  -- Add spacing before the message
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false, -- Don't update diagnostics in insert mode
+  severity_sort = true,
+  float = {
+    focusable = false,
+    source = 'always',
+    header = '',
+    prefix = '',
+    border = 'rounded',
+  },
+})
+
+-- Define more visible signs
+local signs = { Error = "✘", Warn = "▲", Hint = "⚑", Info = "ℹ" }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
+-- Create user command for format (async by default)
+vim.api.nvim_create_user_command('Format', function() 
+  require("conform").format({ async = true, lsp_fallback = true })
 end, {})
-
--- Create space commands similar to CoC
-vim.api.nvim_set_keymap('n', '<space>a', '<cmd>lua vim.diagnostic.setloclist()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<space>e', '<cmd>Telescope lsp_document_symbols<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<space>o', '<cmd>Telescope lsp_document_symbols<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<space>s', '<cmd>Telescope lsp_workspace_symbols<CR>', { noremap = true, silent = true })
-
-vim.keymap.set('i', '<C-space>', vim.lsp.buf.signature_help, { buffer = bufnr })

@@ -3,9 +3,9 @@
 ## Commands
 - **Install plugins**: Run Neovim and plugins will auto-install
 - **Update plugins**: `:Lazy update` - Update installed plugins 
-- **Format code**: `:Format` - Format current buffer using CoC
+- **Format code**: `:Format` - Format current buffer using LSP
 - **Format JSON**: `:FormatJSON` - Format JSON files using Python
-- **Lint**: CoC provides inline linting via configured language servers
+- **Lint**: Native LSP provides inline linting via configured language servers
 
 ## Code Style Guidelines
 - **Indentation**: 4 spaces (no tabs)
