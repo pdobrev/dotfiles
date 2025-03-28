@@ -353,14 +353,50 @@ cmp.setup.cmdline('/', {
   }
 })
 
--- Completely disable command line completion to eliminate flickering 
--- You can still use Tab for basic vim command completion
--- This effectively disables the nvim-cmp commandline completion
-cmp.setup.cmdline(':', {
-  enabled = function()
-    -- Disable automatic popup
-    return false
+-- Enable command line completion only on Tab press, not automatically
+local cmdline_mappings = cmp.mapping.preset.cmdline()
+
+-- Add custom mappings for command-line mode
+cmdline_mappings['<C-j>'] = cmp.mapping(function(fallback)
+  if cmp.visible() then
+    cmp.select_next_item()
+  else
+    fallback()
   end
+end, {'c'})
+
+cmdline_mappings['<C-k>'] = cmp.mapping(function(fallback)
+  if cmp.visible() then
+    cmp.select_prev_item()
+  else
+    fallback()
+  end
+end, {'c'})
+
+cmdline_mappings['<Down>'] = cmp.mapping(function(fallback)
+  if cmp.visible() then
+    cmp.select_next_item()
+  else
+    fallback()
+  end
+end, {'c'})
+
+cmdline_mappings['<Up>'] = cmp.mapping(function(fallback)
+  if cmp.visible() then
+    cmp.select_prev_item()
+  else
+    fallback()
+  end
+end, {'c'})
+
+cmp.setup.cmdline(':', {
+  mapping = cmdline_mappings,
+  sources = {
+    { name = 'cmdline' }
+  },
+  completion = {
+    autocomplete = false -- Only show completion when requested
+  }
 })
 
 -- Setup LSP capabilities with nvim-cmp
