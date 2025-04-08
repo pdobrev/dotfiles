@@ -40,7 +40,34 @@ require("lazy").setup({
   },
   { "junegunn/fzf.vim" },
   { "scrooloose/nerdcommenter" },
-  { "github/copilot.vim" },
+
+
+  -- AI
+  -- { "github/copilot.vim",
+  --   config = function()
+  --     vim.g.copilot_no_tab_map = true
+  --     vim.g.copilot_assume_mapped = true
+  --     vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+  --   end
+  -- },
+  { "augmentcode/augment.vim",
+    config = function()
+      -- Set up key mappings similar to copilot using vim commands
+      vim.cmd([[
+        " Use Ctrl-Y to accept a suggestion
+        inoremap <c-y> <cmd>call augment#Accept()<cr>
+
+        " Use enter to accept a suggestion, falling back to a newline if no suggestion is available
+        inoremap <cr> <cmd>call augment#Accept("\n")<cr>
+
+        " Toggle Augment chat with <leader>a
+        nnoremap <leader>ac :Augment chat<cr>
+        vnoremap <leader>ac :Augment chat<CR>
+        nnoremap <leader>at :Augment chat-toggle<CR>
+      ]])
+    end
+  },
+
   { "chrisbra/csv.vim" },
   
   -- Markdown
@@ -57,6 +84,7 @@ require("lazy").setup({
   { "saadparwaiz1/cmp_luasnip" },
   { "stevearc/conform.nvim" },
   { "ray-x/lsp_signature.nvim" },
+
   -- Lazy-load TypeScript tools only when needed
   { "pmizio/typescript-tools.nvim", 
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -125,7 +153,7 @@ require("lazy").setup({
           -- Disable automatic organize imports on save
           tsserver_organize_imports_on_format = false,
           -- Disable formatting from tsserver
-          typescript = { format = { enable = false } },
+          typescript = { format = { enable = true } },
           javascript = { format = { enable = false } },
           -- Performance optimization settings
           complete_function_calls = false,
@@ -195,10 +223,6 @@ vim.opt.visualbell = true
 -- Set colorscheme
 vim.cmd("colorscheme gruvbox")
 
--- Copilot configuration
-vim.g.copilot_no_tab_map = true
-vim.g.copilot_assume_mapped = true
-vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
 
 -- NERD Commenter
 vim.g.NERDDefaultAlign = 'left'
@@ -430,12 +454,25 @@ vim.diagnostic.config({
   },
 })
 
--- Define more visible signs
+-- Configure diagnostics with custom signs
 local signs = { Error = "✘", Warn = "▲", Hint = "⚑", Info = "ℹ" }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+vim.diagnostic.config({
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = signs.Error,
+      [vim.diagnostic.severity.WARN] = signs.Warn,
+      [vim.diagnostic.severity.HINT] = signs.Hint,
+      [vim.diagnostic.severity.INFO] = signs.Info,
+    },
+    texthl = {
+      [vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+      [vim.diagnostic.severity.WARN] = "DiagnosticSignWarn",
+      [vim.diagnostic.severity.HINT] = "DiagnosticSignHint",
+      [vim.diagnostic.severity.INFO] = "DiagnosticSignInfo",
+    },
+    numhl = "", -- Optional: Matches your original empty numhl
+  },
+})
 
 -- Custom diagnostic navigation that silently does nothing when no diagnostics exist
 local goto_next = function()
