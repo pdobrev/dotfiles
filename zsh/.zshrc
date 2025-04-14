@@ -13,6 +13,10 @@ export EDITOR=nvim
 
 bindkey \^U backward-kill-line
 
+# Ctrl+j and Ctrl+k for history navigation
+bindkey "^J" down-line-or-history
+bindkey "^K" up-line-or-history
+
 if [ "$(uname 2> /dev/null)" = "Linux" ]; then
     alias open="xdg-open"
 fi
