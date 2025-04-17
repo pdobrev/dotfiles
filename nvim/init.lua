@@ -455,11 +455,19 @@ vim.diagnostic.config({
   update_in_insert = false, -- Don't update diagnostics in insert mode
   severity_sort = true,
   float = {
-    focusable = false,
+    focusable = true, -- Make float windows focusable to allow scrolling
     source = 'always',
     header = '',
     prefix = '',
     border = 'rounded',
+    max_width = 80,   -- Set maximum width to prevent wrapping
+    format = function(diagnostic)
+      -- Return full diagnostic message without truncation
+      if diagnostic.message then
+        return diagnostic.message
+      end
+      return diagnostic
+    end,
   },
   -- Performance improvements
   update_on_change = false,  -- Only update diagnostics on InsertLeave and BufWrite
@@ -509,9 +517,49 @@ local goto_prev = function()
   end
 end
 
+-- Default diagnostic float function
+local open_diagnostic_float = function()
+  vim.diagnostic.open_float({ scope = "cursor" })
+end
+
+-- Expanded diagnostic float with full width
+local open_full_diagnostic_float = function()
+  local current_diagnostic = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })[1]
+  if current_diagnostic then
+    vim.api.nvim_open_win(
+      vim.api.nvim_create_buf(false, true),
+      true,
+      {
+        relative = "editor",
+        width = vim.o.columns - 4,
+        height = math.max(5, math.min(20, vim.o.lines - 10)),
+        row = math.min(5, vim.o.lines / 2 - 5),
+        col = 2,
+        style = "minimal",
+        border = "rounded",
+        title = "Full Error Message",
+        title_pos = "center",
+      }
+    )
+    
+    local buf = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+    vim.api.nvim_buf_set_option(buf, "modifiable", true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(current_diagnostic.message, "\n"))
+    vim.api.nvim_buf_set_option(buf, "modifiable", false)
+    
+    -- Add keymaps to close window
+    vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":close<CR>", { noremap = true, silent = true })
+  else
+    vim.notify("No diagnostic at cursor position", vim.log.levels.INFO)
+  end
+end
+
 vim.keymap.set('n', ']g', goto_next, { noremap = true, silent = true })
 vim.keymap.set('n', '[g', goto_prev, { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>e', open_diagnostic_float, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>E', open_full_diagnostic_float, { noremap = true, silent = true, desc = "Show full error message" })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
 
 -- Setup conform.nvim for formatting
