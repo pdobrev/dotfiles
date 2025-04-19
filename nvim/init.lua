@@ -33,12 +33,104 @@ require("lazy").setup({
   },
   
   -- Tools
-  { "junegunn/fzf", 
+  { "ibhagwan/fzf-lua",
     build = function()
-      vim.fn.system({ "bash", "-c", vim.fn.stdpath("data") .. "/lazy/fzf/install --all" })
-    end 
+      -- Auto-install fzf if needed
+      local function install_fzf()
+        local is_mac = vim.fn.has('macunix') == 1
+        
+        if is_mac then
+          print("Installing fzf with Homebrew...")
+          vim.fn.system({"brew", "install", "fzf"})
+          if vim.v.shell_error ~= 0 then
+            print("Error installing fzf with Homebrew. Please install manually.")
+            return false
+          end
+          print("fzf installed successfully!")
+          return true
+        else
+          -- For Linux or Windows, provide instructions
+          print("Please install fzf manually:")
+          print("- Linux: Use your package manager (apt install fzf, pacman -S fzf, etc.)")
+          print("- Windows: Use scoop, chocolatey, or download from GitHub")
+          return false
+        end
+      end
+      
+      -- Check if fzf exists and install if needed
+      if vim.fn.executable('fzf') ~= 1 then
+        install_fzf()
+      end
+    end,
+
+    config = function()
+      require("fzf-lua").setup({
+        -- Use system fzf
+        fzf_bin = 'fzf',
+        winopts = {
+          preview = { 
+            default = "builtin",
+            delay = 30,        -- Slightly reduced preview delay
+            title = false,     -- Disable title
+            delay_syntax = 150, -- Delay syntax highlighting even more
+          },
+          height = 0.65,       -- Shorter window height
+          width = 0.80,
+          row = 0.35,          -- Position near the middle of screen
+          col = 0.5,           -- Center horizontally
+          border = "single",     -- No border for faster rendering
+          fullscreen = false,  -- Never use fullscreen
+        },
+        fzf_opts = {
+          ["--layout"] = "reverse-list", -- Keep the input prompt line on the bottom
+          ["--info"] = "inline",
+          ["--tiebreak"] = "begin,index", -- Faster sorting
+        },
+        keymap = {
+          fzf = {
+            ["ctrl-d"] = "half-page-down",
+            ["ctrl-u"] = "half-page-up",
+          },
+        },
+        files = {
+          fd_opts = "--color=never --type f --hidden --follow --exclude .git --max-depth 10", -- Limit depth for faster results
+          multiprocess = true, -- Speed up file operations
+          max_results = 1000,  -- Limit results for faster display
+          file_icons = false,  -- Disable file icons
+          git_file_shared_list = true, -- Share file list with git_files
+          use_cache = true,   -- Cache results for reuse
+        },
+        grep = {
+          rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512",
+          no_esc = true, -- disable auto-escaping characters in queries
+          multiprocess = true, -- Faster grep operations
+        },
+        -- Performance optimizations
+        previewer = {
+          builtin = {
+            strict_render = true,     -- Less redraws
+            syntax_limit_b = 500000,  -- Limit syntax highlighting for large files
+            delay_syntax = true,      -- Delay syntax highlighting for speed
+            treesitter = { enable = false }, -- Disable treesitter in preview
+          },
+        },
+        -- Faster buffer handling
+        buffers = {
+          sort_lastused = true,
+          no_header_i = true,         -- Hide headers in insert mode
+          file_icons = false,         -- Disable file icons in buffers
+        },
+        -- Global performance settings
+        file_icons = false,            -- Disable file icons completely
+        show_file_icons = false,       -- Ensure icons are disabled everywhere
+        lazy_loading = {
+          enabled = true,              -- Enable lazy loading
+          throttle = 16,               -- ms
+          lazy_seconds = 0.5           -- load after 0.5s
+        },
+      })
+    end
   },
-  { "junegunn/fzf.vim" },
   { "scrooloose/nerdcommenter" },
 
 
@@ -116,7 +208,8 @@ require("lazy").setup({
         vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
         vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references() end, opts)
         -- Use conform for formatting
         vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
         
@@ -243,18 +336,17 @@ vim.cmd([[
     autocmd BufWritePost ~/.config/nvim/init.lua source <afile>
   augroup end
 ]])
-vim.api.nvim_set_keymap('n', ',f', ':GFiles --cached --others --exclude-standard<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', ',r', ':Rg<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', ',f', '<cmd>lua require("fzf-lua").git_files()<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', ',r', '<cmd>lua require("fzf-lua").live_grep()<CR>', { noremap = true })
 
 -- Expand %% to directory of current file in command mode
 vim.api.nvim_set_keymap('c', '%%', [[<C-R>=expand('%:p:h').'/'<CR>]], { noremap = true })
 
--- FZF
-vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden'
-vim.api.nvim_set_keymap('n', '<C-P>', ':Files<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<F3>', ':Buffers<CR>', { noremap = true })
-vim.api.nvim_set_keymap('v', '<F3>', '<Esc>:Buffers<CR>', { noremap = true })
-vim.api.nvim_set_keymap('i', '<F3>', '<Esc>:Buffers<CR>', { noremap = true })
+-- FZF-Lua
+vim.api.nvim_set_keymap('n', '<C-P>', '<cmd>lua require("fzf-lua").files()<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<F3>', '<cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
+vim.api.nvim_set_keymap('v', '<F3>', '<Esc><cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
+vim.api.nvim_set_keymap('i', '<F3>', '<Esc><cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
 
 -- Better visual mode indenting
 vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true })
@@ -294,15 +386,15 @@ local on_attach = function(client, bufnr)
   -- Mappings
   local opts = { noremap = true, silent = true, buffer = bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+  vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+  vim.keymap.set('n', 'gi', function() require("fzf-lua").lsp_implementations() end, opts)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
   vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts) -- signature help in insert mode too
-  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+  vim.keymap.set('n', '<leader>D', function() require("fzf-lua").lsp_typedefs() end, opts)
   vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+  vim.keymap.set('n', '<leader>ca', function() require("fzf-lua").lsp_code_actions() end, opts)
+  vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump_to_single_result = true }) end, opts)
   -- Use conform for formatting instead of LSP
   vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
   
@@ -310,7 +402,8 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, opts)
   vim.keymap.set('n', ']g', vim.diagnostic.goto_next, opts)
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+  vim.keymap.set('n', '<leader>q', function() require("fzf-lua").diagnostics_document() end, opts)
+  vim.keymap.set('n', '<leader>Q', function() require("fzf-lua").diagnostics_workspace() end, opts)
   
   -- Setup lsp_signature for a gentler signature help experience
   require("lsp_signature").on_attach({
