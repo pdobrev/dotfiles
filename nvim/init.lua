@@ -89,7 +89,7 @@ require("lazy").setup({
         keymap = {
           fzf = {
             ["ctrl-d"] = "half-page-down",
-            ["ctrl-u"] = "half-page-up",
+            ["ctrl-u"] = "clear-query",
           },
         },
         files = {
@@ -150,7 +150,7 @@ require("lazy").setup({
         inoremap <c-y> <cmd>call augment#Accept()<cr>
 
         " Use enter to accept a suggestion, falling back to a newline if no suggestion is available
-        inoremap <cr> <cmd>call augment#Accept("\n")<cr>
+        " inoremap <cr> <cmd>call augment#Accept("\n")<cr>
 
         " Toggle Augment chat with <leader>a
         nnoremap <leader>ac :Augment chat<cr>
@@ -200,7 +200,8 @@ require("lazy").setup({
         -- Mappings
         local opts = { noremap = true, silent = true, buffer = bufnr }
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
         vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
@@ -667,6 +668,15 @@ require("conform").setup({
     json = { "prettierd", "prettier" },
     yaml = { "prettierd", "prettier" },
     markdown = { "prettierd", "prettier" },
+    lua = { "trim_whitespace" },
+  },
+  
+  formatters = {
+    trim_whitespace = {
+      command = "sed",
+      args = { "-i", "'s/\\s\\+$//'" },
+      stdin = false,
+    },
   },
   -- format_on_save = {
   --   lsp_fallback = true,
