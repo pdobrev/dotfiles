@@ -262,9 +262,6 @@ require("lazy").setup({
         disable_formatting = true,
         -- Additional performance tweaks
         tsserver_max_memory = 2048,         -- Limit memory usage
-        tsserver_file_preferences = {
-          disableSuggestions = true,        -- Disable suggestions to improve performance
-        },
       })
       
       -- Add TypeScript quick action mappings
@@ -537,6 +534,14 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Initialize language servers
 -- TS configuration moved to the lazy-loading configuration above
 -- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
+
+-- ESLint language server
+require('lspconfig').eslint.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  root_dir = require('lspconfig.util').find_git_ancestor,
+})
 
 -- Diagnostic config similar to coc but optimized for performance
 vim.diagnostic.config({
