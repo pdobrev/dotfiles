@@ -142,6 +142,7 @@ require("lazy").setup({
   --     vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
   --   end
   -- },
+
   { "augmentcode/augment.vim",
     config = function()
       -- Set up key mappings similar to copilot using vim commands
@@ -429,6 +430,21 @@ cmp.setup({
       luasnip.lsp_expand(args.body)
     end,
   },
+  formatting = {
+    format = function(entry, vim_item)
+      -- Show source in completion menu
+      local menu = ({
+        nvim_lsp = "[LSP]",
+        luasnip = "[Snippet]",
+        buffer = "[Buffer]",
+        path = "[Path]",
+        cmdline = "[Cmd]",
+      })[entry.source.name]
+      
+      vim_item.menu = menu
+      return vim_item
+    end,
+  },
   mapping = cmp.mapping.preset.insert({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
@@ -535,13 +551,50 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- TS configuration moved to the lazy-loading configuration above
 -- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
 
--- ESLint language server
-require('lspconfig').eslint.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  root_dir = require('lspconfig.util').find_git_ancestor,
-})
+-- ESLint language server (only enabled when ESLint config exists)
+local function eslint_is_present()
+  local eslint_files = {
+    '.eslintrc',
+    '.eslintrc.js',
+    '.eslintrc.json',
+    '.eslintrc.yml',
+    '.eslintrc.yaml',
+  }
+  
+  -- Check for ESLint config files
+  for _, file in ipairs(eslint_files) do
+    if vim.fn.filereadable(vim.fn.getcwd() .. '/' .. file) == 1 then
+      return true
+    end
+  end
+  
+  -- Check package.json for eslint config
+  local package_json = vim.fn.getcwd() .. '/package.json'
+  if vim.fn.filereadable(package_json) == 1 then
+    local content = vim.fn.readfile(package_json)
+    local content_str = table.concat(content, '\n')
+    if content_str:find('"eslintConfig"') then
+      return true
+    end
+  end
+  
+  -- Check for eslint in node_modules
+  if vim.fn.isdirectory(vim.fn.getcwd() .. '/node_modules/eslint') == 1 then
+    return true
+  end
+  
+  return false
+end
+
+-- Only set up ESLint LSP if ESLint is present
+if eslint_is_present() then
+  require('lspconfig').eslint.setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
+    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+    root_dir = require('lspconfig.util').find_git_ancestor,
+  })
+end
 
 -- Diagnostic config similar to coc but optimized for performance
 vim.diagnostic.config({
