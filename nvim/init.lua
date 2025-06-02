@@ -20,7 +20,7 @@ require("lazy").setup({
   -- UI
   { "morhetz/gruvbox", priority = 1000 },
   { "nvim-tree/nvim-web-devicons" },
-  { "nvim-tree/nvim-tree.lua", 
+  { "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function() require("nvim-tree").setup() end
   },
@@ -31,14 +31,14 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
   },
-  
+
   -- Tools
   { "ibhagwan/fzf-lua",
     build = function()
       -- Auto-install fzf if needed
       local function install_fzf()
         local is_mac = vim.fn.has('macunix') == 1
-        
+
         if is_mac then
           print("Installing fzf with Homebrew...")
           vim.fn.system({"brew", "install", "fzf"})
@@ -56,7 +56,7 @@ require("lazy").setup({
           return false
         end
       end
-      
+
       -- Check if fzf exists and install if needed
       if vim.fn.executable('fzf') ~= 1 then
         install_fzf()
@@ -68,7 +68,7 @@ require("lazy").setup({
         -- Use system fzf
         fzf_bin = 'fzf',
         winopts = {
-          preview = { 
+          preview = {
             default = "builtin",
             delay = 30,        -- Slightly reduced preview delay
             title = false,     -- Disable title
@@ -162,10 +162,10 @@ require("lazy").setup({
   },
 
   { "chrisbra/csv.vim" },
-  
+
   -- Markdown
   { "iamcco/markdown-preview.nvim", build = "cd app && npx --yes yarn install" },
-  
+
   -- LSP and completion
   { "neovim/nvim-lspconfig" },
   { "hrsh7th/nvim-cmp" },
@@ -179,25 +179,25 @@ require("lazy").setup({
   { "ray-x/lsp_signature.nvim" },
 
   -- Lazy-load TypeScript tools only when needed
-  { "pmizio/typescript-tools.nvim", 
+  { "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     ft = {
-      "javascript", "javascriptreact", "javascript.jsx", 
+      "javascript", "javascriptreact", "javascript.jsx",
       "typescript", "typescriptreact", "typescript.tsx"
     },
     config = function()
       -- Get LSP capabilities for TypeScript
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      
+
       -- Common LSP setup
       local on_attach = function(client, bufnr)
         -- Disable formatting for all LSP clients - we use Prettier via conform.nvim instead
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
-        
+
         -- Enable completion triggered by <c-x><c-o>
         vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-        
+
         -- Mappings
         local opts = { noremap = true, silent = true, buffer = bufnr }
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
@@ -214,7 +214,7 @@ require("lazy").setup({
         vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references() end, opts)
         -- Use conform for formatting
         vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
-        
+
         -- Setup lsp_signature
         require("lsp_signature").on_attach({
           bind = true,
@@ -227,7 +227,7 @@ require("lazy").setup({
           select_signature_key = '<C-n>',
         }, bufnr)
       end
-      
+
       -- TypeScript-tools configuration
       require("typescript-tools").setup({
         on_attach = function(client, bufnr)
@@ -264,7 +264,7 @@ require("lazy").setup({
         -- Additional performance tweaks
         tsserver_max_memory = 2048,         -- Limit memory usage
       })
-      
+
       -- Add TypeScript quick action mappings
       vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
       vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
@@ -280,6 +280,7 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.clipboard = "unnamed"
 vim.opt.signcolumn = "yes" -- Always show the sign column to prevent text shifting
+vim.opt.cinoptions = "l1" -- Properly align braces indentation
 
 -- Create directory for swap files if it doesn't exist
 local swap_dir = vim.fn.expand("~/.vim/tmp")
@@ -396,14 +397,14 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump_to_single_result = true }) end, opts)
   -- Use conform for formatting instead of LSP
   vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
-  
+
   -- Diagnostics
   vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, opts)
   vim.keymap.set('n', ']g', vim.diagnostic.goto_next, opts)
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
   vim.keymap.set('n', '<leader>q', function() require("fzf-lua").diagnostics_document() end, opts)
   vim.keymap.set('n', '<leader>Q', function() require("fzf-lua").diagnostics_workspace() end, opts)
-  
+
   -- Setup lsp_signature for a gentler signature help experience
   require("lsp_signature").on_attach({
     bind = true,
@@ -440,7 +441,7 @@ cmp.setup({
         path = "[Path]",
         cmdline = "[Cmd]",
       })[entry.source.name]
-      
+
       vim_item.menu = menu
       return vim_item
     end,
@@ -551,54 +552,40 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- TS configuration moved to the lazy-loading configuration above
 -- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
 
--- ESLint language server (only enabled when ESLint config exists)
-local function eslint_is_present()
-  local eslint_files = {
-    '.eslintrc',
-    '.eslintrc.js',
-    '.eslintrc.json',
-    '.eslintrc.yml',
-    '.eslintrc.yaml',
-  }
-  
-  -- Check for ESLint config files
-  for _, file in ipairs(eslint_files) do
-    if vim.fn.filereadable(vim.fn.getcwd() .. '/' .. file) == 1 then
-      return true
+-- ESLint LSP setup - will only activate in projects with ESLint config
+require('lspconfig').eslint.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  -- Only start ESLint when a config file is found
+  root_dir = function(fname)
+    local root_pattern = require('lspconfig.util').root_pattern(
+      '.eslintrc',
+      '.eslintrc.js',
+      '.eslintrc.json',
+      '.eslintrc.yml',
+      '.eslintrc.yaml',
+      '.eslintrc.cjs',
+      'eslint.config.js',
+      'eslint.config.mjs',
+      'eslint.config.cjs',
+      'eslint.config.ts',
+      'eslint.config.mts',
+      'eslint.config.cts'
+    )
+    -- If root_pattern finds a config, use that directory
+    local root = root_pattern(fname)
+    if root then
+      return root
     end
+    -- Otherwise, don't start the server
+    return nil
   end
-  
-  -- Check package.json for eslint config
-  local package_json = vim.fn.getcwd() .. '/package.json'
-  if vim.fn.filereadable(package_json) == 1 then
-    local content = vim.fn.readfile(package_json)
-    local content_str = table.concat(content, '\n')
-    if content_str:find('"eslintConfig"') then
-      return true
-    end
-  end
-  
-  -- Check for eslint in node_modules
-  if vim.fn.isdirectory(vim.fn.getcwd() .. '/node_modules/eslint') == 1 then
-    return true
-  end
-  
-  return false
-end
-
--- Only set up ESLint LSP if ESLint is present
-if eslint_is_present() then
-  require('lspconfig').eslint.setup({
-    on_attach = on_attach,
-    capabilities = capabilities,
-    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-    root_dir = require('lspconfig.util').find_git_ancestor,
-  })
-end
+})
 
 -- Diagnostic config similar to coc but optimized for performance
 vim.diagnostic.config({
-  virtual_text = { 
+  virtual_text = {
     prefix = '■', -- Use a visible marker for virtual text
     spacing = 2,  -- Add spacing before the message
   },
@@ -693,13 +680,13 @@ local open_full_diagnostic_float = function()
         title_pos = "center",
       }
     )
-    
+
     local buf = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
     vim.api.nvim_buf_set_option(buf, "modifiable", true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(current_diagnostic.message, "\n"))
     vim.api.nvim_buf_set_option(buf, "modifiable", false)
-    
+
     -- Add keymaps to close window
     vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { noremap = true, silent = true })
     vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":close<CR>", { noremap = true, silent = true })
@@ -728,7 +715,7 @@ require("conform").setup({
     markdown = { "prettierd", "prettier" },
     lua = { "trim_whitespace" },
   },
-  
+
   formatters = {
     trim_whitespace = {
       command = "sed",
@@ -753,9 +740,9 @@ require("conform").setup({
 })
 
 -- Create user command for manual format (async by default)
-vim.api.nvim_create_user_command('Format', function() 
-  require("conform").format({ 
-    async = true, 
+vim.api.nvim_create_user_command('Format', function()
+  require("conform").format({
+    async = true,
     lsp_fallback = true,
     timeout_ms = 1000,
   })
@@ -764,14 +751,14 @@ end, {})
 -- TreeSitter configuration with optimized performance
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
-    "javascript", "typescript", "tsx", "json", "html", "css", 
+    "javascript", "typescript", "tsx", "json", "html", "css",
     "lua", "vim", "vimdoc", "bash", "markdown", "markdown_inline"
   },
   -- Improve startup time by delaying parser installations
   sync_install = false,
   -- Only install parsers when actually needed
   auto_install = false,  -- Disable automatic installation for better control
-  
+
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
@@ -786,13 +773,18 @@ require('nvim-treesitter.configs').setup({
       return false
     end,
   },
-  
-  -- Only enable indent for languages where it works well
-  indent = { 
+
+  -- Enable TreeSitter indentation for proper behavior when opening new lines
+  indent = {
     enable = true,
-    -- disable = { "typescript", "tsx" } -- Sometimes TS indent can be slow
+    disable = { "python" } -- Disable for languages where it might cause issues
   },
-  
+
+  -- Ensure brace indentation works properly
+  autopairs = {
+    enable = true,
+  },
+
   -- Incremental selection based on the named nodes from the grammar
   incremental_selection = {
     enable = true,
@@ -803,7 +795,7 @@ require('nvim-treesitter.configs').setup({
       node_decremental = "<bs>",
     },
   },
-  
+
   -- Text objects for selections, movements, swaps, and more
   textobjects = {
     select = {
@@ -857,7 +849,7 @@ vim.api.nvim_create_user_command('InstallFormatters', function()
   -- Check if installation was successful
   local exitcode_prettierd = vim.fn.system('command -v prettierd >/dev/null 2>&1 && echo $?')
   local exitcode_prettier = vim.fn.system('command -v prettier >/dev/null 2>&1 && echo $?')
-  
+
   -- Report results
   if exitcode_prettierd == "0\n" and exitcode_prettier == "0\n" then
     print("✅ Formatters installed successfully!")
@@ -895,5 +887,124 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
     vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
     vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnused<CR>", { buffer = true, desc = "Remove Unused" })
+
+    -- Check for Prettier config files
+    local prettier_config_files = {
+      '.prettierrc',
+      '.prettierrc.js',
+      '.prettierrc.json',
+      '.prettierrc.yml',
+      '.prettierrc.yaml',
+      'prettier.config.js',
+    }
+
+    local has_prettier_config = false
+    for _, file in ipairs(prettier_config_files) do
+      if vim.fn.filereadable(vim.fn.getcwd() .. '/' .. file) == 1 then
+        has_prettier_config = true
+        break
+      end
+    end
+
+    -- Check package.json for prettier config
+    local package_json = vim.fn.getcwd() .. '/package.json'
+    if not has_prettier_config and vim.fn.filereadable(package_json) == 1 then
+      local content = vim.fn.readfile(package_json)
+      local content_str = table.concat(content, '\n')
+      if content_str:find('"prettier"') then
+        has_prettier_config = true
+      end
+    end
+
+    -- Use default TypeScript indent settings if no prettier config found
+    if not has_prettier_config then
+      vim.opt_local.shiftwidth = 2
+      vim.opt_local.tabstop = 2
+      vim.opt_local.expandtab = true
+      vim.opt_local.smartindent = true
+    else
+      -- Helper function to read file content
+      local function read_file_content(file_path)
+        if vim.fn.filereadable(file_path) == 1 then
+          local content = vim.fn.readfile(file_path)
+          return table.concat(content, '\n')
+        end
+        return nil
+      end
+
+      -- Parse JSON-like config files (prettier)
+      local function parse_prettier_config(content)
+        if not content then return nil end
+
+        -- Define patterns to try (property name variations and quote styles)
+        local patterns = {
+          '"tabWidth":%s*(%d+)',       -- Standard JSON "tabWidth": 2
+          '"tab[Ww]idth":%s*(%d+)',    -- Case variation "tabWidth" or "tabwidth"
+          "'tabWidth':%s*(%d+)",       -- Single quotes 'tabWidth': 2
+          "'tab[Ww]idth':%s*(%d+)",    -- Single quotes with case variation
+          "tabWidth:%s*(%d+)",         -- No quotes (JS format)
+          "tab[Ww]idth:%s*(%d+)"       -- No quotes with case variation
+        }
+
+        -- Try each pattern
+        for _, pattern in ipairs(patterns) do
+          local tab_width = content:match(pattern)
+          if tab_width then
+            return tonumber(tab_width)
+          end
+        end
+
+        return nil
+      end
+
+      -- Parse EditorConfig
+      local function parse_editorconfig(content)
+        if not content then return nil end
+
+        -- Look for indent_size in the file
+        local indent_size = content:match("indent_size%s*=%s*(%d+)")
+        return indent_size and tonumber(indent_size) or nil
+      end
+
+      -- Main function to detect indent size
+      local function detect_prettier_indent()
+        local cwd = vim.fn.getcwd()
+
+        -- Config files to check, in order of priority
+        local config_files = {
+          { path = cwd .. '/.prettierrc', parser = parse_prettier_config },
+          { path = cwd .. '/.prettierrc.json', parser = parse_prettier_config },
+          { path = cwd .. '/.prettierrc.js', parser = nil },  -- JS files can't be parsed directly
+          { path = cwd .. '/.editorconfig', parser = parse_editorconfig }
+        }
+
+        -- Try each config file
+        for _, config in ipairs(config_files) do
+          if config.parser then
+            local content = read_file_content(config.path)
+            local indent_size = config.parser(content)
+            if indent_size then
+              return indent_size
+            end
+          end
+        end
+
+        -- Default to 2 spaces if we can't detect
+        return 2
+      end
+
+      local indent_size = detect_prettier_indent()
+      vim.opt_local.shiftwidth = indent_size
+      vim.opt_local.tabstop = indent_size
+      vim.opt_local.expandtab = true
+      vim.opt_local.smartindent = true
+
+      -- Enable proper indentation with TreeSitter
+      vim.opt_local.cindent = true
+      -- Ensure proper indentation for opening lines under braces
+      vim.opt_local.indentkeys = vim.opt_local.indentkeys + '0{,0},0),0]'
+      -- Let TreeSitter handle indentation
+      vim.opt_local.indentexpr = "nvim_treesitter#indent()"
+    end
   end,
 })
