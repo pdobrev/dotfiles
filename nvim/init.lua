@@ -269,6 +269,7 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
       vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
       vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnused<CR>", { buffer = true, desc = "Remove Unused" })
+      vim.keymap.set("n", "<leader>rf", "<cmd>TSToolsRenameFile<CR>", { buffer = true, desc = "Rename current file with TS updates" })
     end
   }
 })
@@ -954,6 +955,13 @@ vim.api.nvim_create_autocmd("FileType", {
           end
         end
 
+        -- Check for overrides structure (common prettier pattern)
+        local override_pattern = '"overrides".-"tabWidth":%s*(%d+)'
+        local tab_width = content:match(override_pattern)
+        if tab_width then
+          return tonumber(tab_width)
+        end
+
         return nil
       end
 
@@ -997,12 +1005,12 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.opt_local.shiftwidth = indent_size
       vim.opt_local.tabstop = indent_size
       vim.opt_local.expandtab = true
-      vim.opt_local.smartindent = true
-
-      -- Enable proper indentation with TreeSitter
-      vim.opt_local.cindent = true
-      -- Ensure proper indentation for opening lines under braces
-      vim.opt_local.indentkeys = vim.opt_local.indentkeys + '0{,0},0),0]'
+      
+      -- Disable conflicting indent methods when using TreeSitter
+      vim.opt_local.smartindent = false
+      vim.opt_local.cindent = false
+      vim.opt_local.autoindent = true  -- Keep only basic autoindent
+      
       -- Let TreeSitter handle indentation
       vim.opt_local.indentexpr = "nvim_treesitter#indent()"
     end
