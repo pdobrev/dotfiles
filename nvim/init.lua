@@ -31,6 +31,12 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
   },
+  
+  -- Automatic indentation detection
+  { "tpope/vim-sleuth",
+    lazy = false,
+    priority = 900,
+  },
 
   -- Tools
   { "ibhagwan/fzf-lua",
@@ -281,7 +287,6 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.clipboard = "unnamed"
 vim.opt.signcolumn = "yes" -- Always show the sign column to prevent text shifting
-vim.opt.cinoptions = "l1" -- Properly align braces indentation
 
 -- Create directory for swap files if it doesn't exist
 local swap_dir = vim.fn.expand("~/.vim/tmp")
@@ -298,21 +303,16 @@ vim.opt.incsearch = true
 vim.opt.hlsearch = false
 vim.opt.scrolljump = 7
 vim.opt.scrolloff = 7
-vim.opt.visualbell = false
 vim.opt.hidden = true
 vim.opt.buflisted = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.encoding = "utf-8"
 vim.opt.autoindent = true
-vim.opt.smartindent = true
 vim.opt.expandtab = true
-vim.opt.softtabstop = 4
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
 vim.opt.formatoptions:append("cr")
 vim.opt.errorbells = false
-vim.opt.visualbell = true
+vim.opt.visualbell = false
 
 -- Set colorscheme
 vim.cmd("colorscheme gruvbox")
@@ -775,14 +775,7 @@ require('nvim-treesitter.configs').setup({
     end,
   },
 
-  -- Enable TreeSitter indentation for proper behavior when opening new lines
   indent = {
-    enable = true,
-    disable = { "python" } -- Disable for languages where it might cause issues
-  },
-
-  -- Ensure brace indentation works properly
-  autopairs = {
     enable = true,
   },
 
@@ -881,138 +874,18 @@ vim.api.nvim_create_user_command('TSInstall', function(opts)
   vim.cmd('TSInstall ' .. parser)
 end, { nargs = '?' })
 
--- Add mappings for TypeScript quick actions
+
+-- TypeScript/JavaScript setup
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
   callback = function()
+    -- Use smartindent for basic brace indenting
+    vim.bo.smartindent = true
+    vim.bo.indentexpr = ""
+    
+    -- Keymaps
     vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
     vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
     vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnused<CR>", { buffer = true, desc = "Remove Unused" })
-
-    -- Check for Prettier config files
-    local prettier_config_files = {
-      '.prettierrc',
-      '.prettierrc.js',
-      '.prettierrc.json',
-      '.prettierrc.yml',
-      '.prettierrc.yaml',
-      'prettier.config.js',
-    }
-
-    local has_prettier_config = false
-    for _, file in ipairs(prettier_config_files) do
-      if vim.fn.filereadable(vim.fn.getcwd() .. '/' .. file) == 1 then
-        has_prettier_config = true
-        break
-      end
-    end
-
-    -- Check package.json for prettier config
-    local package_json = vim.fn.getcwd() .. '/package.json'
-    if not has_prettier_config and vim.fn.filereadable(package_json) == 1 then
-      local content = vim.fn.readfile(package_json)
-      local content_str = table.concat(content, '\n')
-      if content_str:find('"prettier"') then
-        has_prettier_config = true
-      end
-    end
-
-    -- Use default TypeScript indent settings if no prettier config found
-    if not has_prettier_config then
-      vim.opt_local.shiftwidth = 2
-      vim.opt_local.tabstop = 2
-      vim.opt_local.expandtab = true
-      vim.opt_local.smartindent = true
-    else
-      -- Helper function to read file content
-      local function read_file_content(file_path)
-        if vim.fn.filereadable(file_path) == 1 then
-          local content = vim.fn.readfile(file_path)
-          return table.concat(content, '\n')
-        end
-        return nil
-      end
-
-      -- Parse JSON-like config files (prettier)
-      local function parse_prettier_config(content)
-        if not content then return nil end
-
-        -- Define patterns to try (property name variations and quote styles)
-        local patterns = {
-          '"tabWidth":%s*(%d+)',       -- Standard JSON "tabWidth": 2
-          '"tab[Ww]idth":%s*(%d+)',    -- Case variation "tabWidth" or "tabwidth"
-          "'tabWidth':%s*(%d+)",       -- Single quotes 'tabWidth': 2
-          "'tab[Ww]idth':%s*(%d+)",    -- Single quotes with case variation
-          "tabWidth:%s*(%d+)",         -- No quotes (JS format)
-          "tab[Ww]idth:%s*(%d+)"       -- No quotes with case variation
-        }
-
-        -- Try each pattern
-        for _, pattern in ipairs(patterns) do
-          local tab_width = content:match(pattern)
-          if tab_width then
-            return tonumber(tab_width)
-          end
-        end
-
-        -- Check for overrides structure (common prettier pattern)
-        local override_pattern = '"overrides".-"tabWidth":%s*(%d+)'
-        local tab_width = content:match(override_pattern)
-        if tab_width then
-          return tonumber(tab_width)
-        end
-
-        return nil
-      end
-
-      -- Parse EditorConfig
-      local function parse_editorconfig(content)
-        if not content then return nil end
-
-        -- Look for indent_size in the file
-        local indent_size = content:match("indent_size%s*=%s*(%d+)")
-        return indent_size and tonumber(indent_size) or nil
-      end
-
-      -- Main function to detect indent size
-      local function detect_prettier_indent()
-        local cwd = vim.fn.getcwd()
-
-        -- Config files to check, in order of priority
-        local config_files = {
-          { path = cwd .. '/.prettierrc', parser = parse_prettier_config },
-          { path = cwd .. '/.prettierrc.json', parser = parse_prettier_config },
-          { path = cwd .. '/.prettierrc.js', parser = nil },  -- JS files can't be parsed directly
-          { path = cwd .. '/.editorconfig', parser = parse_editorconfig }
-        }
-
-        -- Try each config file
-        for _, config in ipairs(config_files) do
-          if config.parser then
-            local content = read_file_content(config.path)
-            local indent_size = config.parser(content)
-            if indent_size then
-              return indent_size
-            end
-          end
-        end
-
-        -- Default to 2 spaces if we can't detect
-        return 2
-      end
-
-      local indent_size = detect_prettier_indent()
-      vim.opt_local.shiftwidth = indent_size
-      vim.opt_local.tabstop = indent_size
-      vim.opt_local.expandtab = true
-      
-      -- Disable conflicting indent methods when using TreeSitter
-      vim.opt_local.smartindent = false
-      vim.opt_local.cindent = false
-      vim.opt_local.autoindent = true  -- Keep only basic autoindent
-      
-      -- Let TreeSitter handle indentation
-      vim.opt_local.indentexpr = "nvim_treesitter#indent()"
-    end
   end,
 })
