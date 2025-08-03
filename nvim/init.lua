@@ -882,7 +882,10 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Use smartindent for basic brace indenting
     vim.bo.smartindent = true
     vim.bo.indentexpr = ""
-    
+    vim.bo.cindent = true  -- Use cindent instead of smartindent
+    vim.bo.cinoptions = "j1,J1,l1"  -- j1,J1 for JS/TS objects, l1 for aligning case statements and comments
+    vim.bo.autoindent = true  -- Ensure autoindent is enabled
+
     -- Keymaps
     vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
     vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
