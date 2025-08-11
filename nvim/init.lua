@@ -891,19 +891,29 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Define the custom indent function
     vim.cmd([[
       function! GetTSIndent()
-        " If previous line is empty (whitespace stripped), look for last non-empty line
-        let lnum = v:lnum - 1
-        while lnum > 0 && getline(lnum) =~ '^\s*$'
-          let lnum = lnum - 1
-        endwhile
+        let lnum = prevnonblank(v:lnum - 1)
         
-        " If we found a non-empty line, use its indent
-        if lnum > 0
-          return indent(lnum)
+        " No previous line
+        if lnum == 0
+          return 0
         endif
         
-        " Otherwise fall back to 0
-        return 0
+        let line = getline(lnum)
+        let ind = indent(lnum)
+        
+        " Increase indent after opening brace/bracket/paren or arrow function
+        " Matches: { or [ or ( at end, => {, or : { (for TypeScript return types)
+        if line =~ '[{(\[][\s,]*$' || line =~ '=>\s*{\s*$' || line =~ ':\s*{\s*$'
+          return ind + shiftwidth()
+        endif
+        
+        " Current line closes brace/bracket/paren - decrease indent
+        if getline(v:lnum) =~ '^\s*[}\]\)]'
+          return ind - shiftwidth()
+        endif
+        
+        " Default: use same indent as previous non-blank line
+        return ind
       endfunction
     ]])
 
