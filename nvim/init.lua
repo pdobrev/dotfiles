@@ -881,10 +881,31 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     -- Use smartindent for basic brace indenting
     vim.bo.smartindent = true
-    vim.bo.indentexpr = ""
     vim.bo.cindent = false  -- Disable cindent for TS/JS
     vim.bo.cinoptions = ""  -- Clear cinoptions
     vim.bo.autoindent = true  -- Ensure autoindent is enabled
+    
+    -- Custom indent expression to handle empty lines properly
+    vim.bo.indentexpr = "GetTSIndent()"
+    
+    -- Define the custom indent function
+    vim.cmd([[
+      function! GetTSIndent()
+        " If previous line is empty (whitespace stripped), look for last non-empty line
+        let lnum = v:lnum - 1
+        while lnum > 0 && getline(lnum) =~ '^\s*$'
+          let lnum = lnum - 1
+        endwhile
+        
+        " If we found a non-empty line, use its indent
+        if lnum > 0
+          return indent(lnum)
+        endif
+        
+        " Otherwise fall back to 0
+        return 0
+      endfunction
+    ]])
 
     -- Keymaps
     vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
