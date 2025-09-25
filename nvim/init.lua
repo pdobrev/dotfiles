@@ -373,7 +373,6 @@ vim.api.nvim_set_keymap('n', '<C-f>', ':FormatBuffer<CR>', { noremap = true, sil
 vim.api.nvim_create_user_command('FormatJSON', '%!python3 -m json.tool', {})
 
 -- LSP Configuration
-local lspconfig = require('lspconfig')
 
 -- Common LSP setup
 local on_attach = function(client, bufnr)
@@ -554,35 +553,27 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
 
 -- ESLint LSP setup - will only activate in projects with ESLint config
-require('lspconfig').eslint.setup({
+vim.lsp.config.eslint = {
+  cmd = { 'vscode-eslint-language-server', '--stdio' },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  -- Only start ESLint when a config file is found (excluding node_modules)
+  root_markers = {
+    '.eslintrc',
+    '.eslintrc.js',
+    '.eslintrc.json',
+    '.eslintrc.yml',
+    '.eslintrc.yaml',
+    '.eslintrc.cjs',
+    'eslint.config.js',
+    'eslint.config.mjs',
+    'eslint.config.cjs',
+    'eslint.config.ts',
+    'eslint.config.mts',
+    'eslint.config.cts'
+  },
   on_attach = on_attach,
   capabilities = capabilities,
-  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  -- Only start ESLint when a config file is found
-  root_dir = function(fname)
-    local root_pattern = require('lspconfig.util').root_pattern(
-      '.eslintrc',
-      '.eslintrc.js',
-      '.eslintrc.json',
-      '.eslintrc.yml',
-      '.eslintrc.yaml',
-      '.eslintrc.cjs',
-      'eslint.config.js',
-      'eslint.config.mjs',
-      'eslint.config.cjs',
-      'eslint.config.ts',
-      'eslint.config.mts',
-      'eslint.config.cts'
-    )
-    -- If root_pattern finds a config, use that directory
-    local root = root_pattern(fname)
-    if root then
-      return root
-    end
-    -- Otherwise, don't start the server
-    return nil
-  end
-})
+}
 
 -- Diagnostic config similar to coc but optimized for performance
 vim.diagnostic.config({
