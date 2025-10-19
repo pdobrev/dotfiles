@@ -578,6 +578,9 @@ vim.lsp.config.eslint = {
   capabilities = capabilities,
 }
 
+-- Enable ESLint LSP for appropriate filetypes
+vim.lsp.enable('eslint')
+
 -- Diagnostic config similar to coc but optimized for performance
 vim.diagnostic.config({
   virtual_text = {
