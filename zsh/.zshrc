@@ -17,6 +17,11 @@ bindkey \^U backward-kill-line
 bindkey "^J" down-line-or-history
 bindkey "^K" up-line-or-history
 
+
+bindkey "^F" forward-word
+bindkey "^B" backward-word
+
+
 if [ "$(uname 2> /dev/null)" = "Linux" ]; then
     alias open="xdg-open"
 fi

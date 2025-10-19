@@ -32,6 +32,9 @@ require("lazy").setup({
     },
   },
   
+  -- GitHub
+  { "tpope/vim-fugitive" },
+
   -- Automatic indentation detection
   { "tpope/vim-sleuth",
     lazy = false,
