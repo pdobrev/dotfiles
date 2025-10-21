@@ -397,7 +397,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<leader>D', function() require("fzf-lua").lsp_typedefs() end, opts)
   vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
   vim.keymap.set('n', '<leader>ca', function() require("fzf-lua").lsp_code_actions() end, opts)
-  vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump_to_single_result = true }) end, opts)
+  vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump1 = true }) end, opts)
   -- Use conform for formatting instead of LSP
   vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
 
