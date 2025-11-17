@@ -31,7 +31,7 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
   },
-  
+
   -- GitHub
   { "tpope/vim-fugitive" },
 
@@ -187,100 +187,8 @@ require("lazy").setup({
   { "stevearc/conform.nvim" },
   { "ray-x/lsp_signature.nvim" },
 
-  -- Lazy-load TypeScript tools only when needed
-  { "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    ft = {
-      "javascript", "javascriptreact", "javascript.jsx",
-      "typescript", "typescriptreact", "typescript.tsx"
-    },
-    config = function()
-      -- Get LSP capabilities for TypeScript
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-      -- Common LSP setup
-      local on_attach = function(client, bufnr)
-        -- Disable formatting for all LSP clients - we use Prettier via conform.nvim instead
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-
-        -- Enable completion triggered by <c-x><c-o>
-        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-        -- Mappings
-        local opts = { noremap = true, silent = true, buffer = bufnr }
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-        vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts)
-        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-        vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-        -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references() end, opts)
-        -- Use conform for formatting
-        vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
-
-        -- Setup lsp_signature
-        require("lsp_signature").on_attach({
-          bind = true,
-          handler_opts = { border = "rounded" },
-          hint_enable = false,
-          floating_window = false,
-          always_trigger = false,
-          close_timeout = 4000,
-          toggle_key = '<C-k>',
-          select_signature_key = '<C-n>',
-        }, bufnr)
-      end
-
-      -- TypeScript-tools configuration
-      require("typescript-tools").setup({
-        on_attach = function(client, bufnr)
-          -- Disable formatting from the LSP
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.documentRangeFormattingProvider = false
-          -- Attach all the regular mappings
-          on_attach(client, bufnr)
-        end,
-        capabilities = capabilities,
-        settings = {
-          -- Prefer relative imports
-          tsserver_file_preferences = {
-            importModuleSpecifierPreference = "relative",
-            importModuleSpecifierEnding = "minimal",
-            quotePreference = "single",
-          },
-          -- Disable automatic organize imports on save
-          tsserver_organize_imports_on_format = false,
-          -- Disable formatting from tsserver
-          typescript = { format = { enable = true } },
-          javascript = { format = { enable = false } },
-          -- Performance optimization settings
-          complete_function_calls = false,
-          include_completions_with_insert_text = false,
-          disable_member_code_lens = true,
-        },
-        -- Performance settings
-        separate_diagnostic_server = false,  -- Use single server for better startup time
-        publish_diagnostic_on = "change",    -- Delay diagnostics to reduce stuttering
-        expose_as_code_action = { "organize_imports", "remove_unused" },
-        -- Disable formatting completely
-        disable_formatting = true,
-        -- Additional performance tweaks
-        tsserver_max_memory = 2048,         -- Limit memory usage
-      })
-
-      -- Add TypeScript quick action mappings
-      vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
-      vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
-      vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnused<CR>", { buffer = true, desc = "Remove Unused" })
-      vim.keymap.set("n", "<leader>rf", "<cmd>TSToolsRenameFile<CR>", { buffer = true, desc = "Rename current file with TS updates" })
-    end
-  }
+  -- TypeScript language server
+  { "neovim/nvim-lspconfig" },
 })
 
 -- General settings
@@ -333,6 +241,10 @@ vim.api.nvim_set_keymap('n', ',n', ':NvimTreeFindFile<CR>', { noremap = true, si
 
 -- Key mappings
 vim.api.nvim_set_keymap('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { noremap = true })
+
+-- Unmap F1 to prevent accidental help opening
+vim.keymap.set({'n', 'i', 'v', 'c', 'o'}, '<F1>', '<Nop>')
+
 -- Add autocmd to reload config when saved
 vim.cmd([[
   augroup config_reload
@@ -389,7 +301,7 @@ local on_attach = function(client, bufnr)
   -- Mappings
   local opts = { noremap = true, silent = true, buffer = bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
   vim.keymap.set('n', 'gi', function() require("fzf-lua").lsp_implementations() end, opts)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
@@ -554,6 +466,32 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Initialize language servers
 -- TS configuration moved to the lazy-loading configuration above
 -- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
+
+-- TypeScript language server setup
+vim.lsp.config.ts_ls = {
+  cmd = { 'typescript-language-server', '--stdio' },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    typescript = {
+      preferences = {
+        importModuleSpecifier = "relative",
+        quotePreference = "single",
+      },
+    },
+    javascript = {
+      preferences = {
+        importModuleSpecifier = "relative",
+        quotePreference = "single",
+      },
+    },
+  },
+}
+
+-- Enable TypeScript LSP for appropriate filetypes
+vim.lsp.enable('ts_ls')
 
 -- ESLint LSP setup - will only activate in projects with ESLint config
 vim.lsp.config.eslint = {
@@ -824,13 +762,25 @@ require('nvim-treesitter.configs').setup({
 })
 
 
--- TypeScript-specific commands
+-- TypeScript-specific commands (for ts_ls)
 vim.api.nvim_create_user_command('OrganizeImports', function()
-  vim.cmd('TSToolsOrganizeImports')
+  vim.lsp.buf.code_action({
+    apply = true,
+    context = {
+      only = { "source.organizeImports.ts" },
+      diagnostics = {},
+    },
+  })
 end, {})
 
 vim.api.nvim_create_user_command('FixAll', function()
-  vim.cmd('TSToolsFixAll')
+  vim.lsp.buf.code_action({
+    apply = true,
+    context = {
+      only = { "source.fixAll.ts" },
+      diagnostics = {},
+    },
+  })
 end, {})
 
 -- Helper command to install formatter daemons
@@ -881,42 +831,50 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.cindent = false  -- Disable cindent for TS/JS
     vim.bo.cinoptions = ""  -- Clear cinoptions
     vim.bo.autoindent = true  -- Ensure autoindent is enabled
-    
+
     -- Custom indent expression to handle empty lines properly
     vim.bo.indentexpr = "GetTSIndent()"
-    
+
     -- Define the custom indent function
     vim.cmd([[
       function! GetTSIndent()
         let lnum = prevnonblank(v:lnum - 1)
-        
+
         " No previous line
         if lnum == 0
           return 0
         endif
-        
+
         let line = getline(lnum)
         let ind = indent(lnum)
-        
+
         " Increase indent after opening brace/bracket/paren or arrow function
         " Matches: { or [ or ( at end, => {, or : { (for TypeScript return types)
         if line =~ '[{(\[][\s,]*$' || line =~ '=>\s*{\s*$' || line =~ ':\s*{\s*$'
           return ind + shiftwidth()
         endif
-        
+
         " Current line closes brace/bracket/paren - decrease indent
         if getline(v:lnum) =~ '^\s*[}\]\)]'
           return ind - shiftwidth()
         endif
-        
+
         " Default: use same indent as previous non-blank line
         return ind
       endfunction
     ]])
 
-    -- Keymaps
-    vim.keymap.set("n", "<leader>oi", "<cmd>TSToolsOrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
-    vim.keymap.set("n", "<leader>fa", "<cmd>TSToolsFixAll<CR>", { buffer = true, desc = "Fix All" })
-    vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnused<CR>", { buffer = true, desc = "Remove Unused" })
+    -- Keymaps for TypeScript
+    vim.keymap.set("n", "<leader>oi", "<cmd>OrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
+    vim.keymap.set("n", "<leader>fa", "<cmd>FixAll<CR>", { buffer = true, desc = "Fix All" })
+    vim.keymap.set("n", "<leader>ru", function()
+      vim.lsp.buf.code_action({
+        apply = true,
+        context = {
+          only = { "source.removeUnused.ts" },
+          diagnostics = {},
+        },
+      })
+    end, { buffer = true, desc = "Remove Unused" })
   end,
 })
