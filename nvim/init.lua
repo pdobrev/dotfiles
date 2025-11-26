@@ -110,7 +110,7 @@ require("lazy").setup({
           use_cache = true,   -- Cache results for reuse
         },
         grep = {
-          rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512",
+          rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=512 --hidden --follow --glob '!.git'",
           no_esc = true, -- disable auto-escaping characters in queries
           multiprocess = true, -- Faster grep operations
         },
@@ -301,7 +301,7 @@ local on_attach = function(client, bufnr)
   -- Mappings
   local opts = { noremap = true, silent = true, buffer = bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+  vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
   vim.keymap.set('n', 'gi', function() require("fzf-lua").lsp_implementations() end, opts)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
