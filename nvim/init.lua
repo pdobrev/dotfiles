@@ -637,37 +637,55 @@ vim.keymap.set('n', '<leader>e', open_diagnostic_float, { noremap = true, silent
 vim.keymap.set('n', '<leader>E', open_full_diagnostic_float, { noremap = true, silent = true, desc = "Show full error message" })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
 
+
+local js_like_formatters = { "oxfmt", "prettierd", "prettier", stop_after_first = true }
+
 -- Setup conform.nvim for formatting
 require("conform").setup({
   formatters_by_ft = {
-    javascript = { "prettierd", "prettier" },
-    typescript = { "prettierd", "prettier" },
-    javascriptreact = { "prettierd", "prettier" },
-    typescriptreact = { "prettierd", "prettier" },
-    css = { "prettierd", "prettier" },
-    html = { "prettierd", "prettier" },
-    json = { "prettierd", "prettier" },
-    yaml = { "prettierd", "prettier" },
-    markdown = { "prettierd", "prettier" },
+    javascript = js_like_formatters,
+    typescript = js_like_formatters,
+    javascriptreact = js_like_formatters,
+    typescriptreact = js_like_formatters,
+    css = js_like_formatters,
+    html = js_like_formatters,
+    json = js_like_formatters,
+    yaml = js_like_formatters,
+    markdown = js_like_formatters,
     lua = { "trim_whitespace" },
   },
 
   formatters = {
+    -- Pending on https://github.com/oxc-project/oxc/issues/14720 getting fixed.
+    oxfmt = {
+      command = "oxfmt",
+      args = { "$FILENAME" },
+      stdin = false,
+      -- If we want to only run oxfmt is there's an .oxfmtrc.json, uncomment this.
+      -- condition = function(ctx)
+      --   return vim.fs.find(".oxfmtrc.json", { path = ctx.filename, upward = true })[1] ~= nil
+      -- end,
+      -- When stdin=false, use this template to generate the temporary file that gets formatted
+      tmpfile_format = ".conform.$RANDOM.$FILENAME",
+    },
+
     trim_whitespace = {
       command = "sed",
       args = { "-i", "'s/\\s\\+$//'" },
       stdin = false,
     },
   },
+
   -- format_on_save = {
   --   lsp_fallback = true,
   -- },
 
   -- Use faster formatters first
   format_after_save = function(bufnr)
+    local name = vim.api.nvim_buf_get_name(bufnr)
     -- If a large file, don't format on save
-    local max_filesize = 100 * 1024 -- 100 KB
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(bufnr))
+    local max_filesize = 512 * 1024 -- 512 KB
+    local ok, stats = pcall(vim.loop.fs_stat, name)
     if ok and stats and stats.size > max_filesize then
       return
     end
