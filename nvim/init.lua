@@ -189,6 +189,40 @@ require("lazy").setup({
 
   -- TypeScript language server
   { "neovim/nvim-lspconfig" },
+
+  -- CtrlSF
+  -- lua/plugins/ctrlsf.lua
+  {
+    "dyng/ctrlsf.vim",
+    cmd = { "CtrlSF", "CtrlSFOpen", "CtrlSFToggle" },
+
+    -- Set options BEFORE the plugin loads
+    init = function()
+      vim.g.ctrlsf_default_root = "project" -- use VCS root when no path is given
+      vim.g.ctrlsf_search_mode = "async"    -- async search (nice UX in big repos)
+      vim.g.ctrlsf_position = "left"
+      vim.g.ctrlsf_winsize = "30%"
+      vim.g.ctrlsf_case_sensitive = "smart" -- default in plugin
+
+      -- keep the results window open when jumping around (optional, but handy)
+      vim.g.ctrlsf_auto_close = { normal = 0, compact = 0 }
+    end,
+
+    keys = {
+      -- “Search in files…” prompt
+      { "<leader>sf", "<Plug>CtrlSFPrompt", mode = "n", remap = true, desc = "CtrlSF: search (prompt)" },
+
+      -- Search word under cursor (fills pattern + waits for optional path/args)
+      { "<leader>sw", "<Plug>CtrlSFCwordPath", mode = "n", remap = true, desc = "CtrlSF: search word under cursor" },
+
+      -- Visual selection search
+      { "<leader>sv", "<Plug>CtrlSFVwordPath", mode = "v", remap = true, desc = "CtrlSF: search visual selection" },
+
+      -- Reopen/toggle results window without re-running the search
+      { "<leader>so", "<cmd>CtrlSFOpen<CR>", desc = "CtrlSF: open results window" },
+      { "<leader>st", "<cmd>CtrlSFToggle<CR>", desc = "CtrlSF: toggle results window" },
+    },
+  }
 })
 
 -- General settings
