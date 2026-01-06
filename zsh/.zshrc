@@ -109,3 +109,6 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 alias claude="/Users/pesho/.claude/local/claude"
+
+# opencode
+export PATH=/Users/pesho/.opencode/bin:$PATH
