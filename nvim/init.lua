@@ -22,6 +22,11 @@ require("lazy").setup({
   { "nvim-tree/nvim-web-devicons" },
   { "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = { "NvimTreeToggle", "NvimTreeFindFile", "NvimTreeOpen" },
+    keys = {
+      { ",d", "<cmd>NvimTreeToggle<CR>", desc = "Toggle file tree" },
+      { ",n", "<cmd>NvimTreeFindFile<CR>", desc = "Find file in tree" },
+    },
     config = function() require("nvim-tree").setup() end
   },
   -- TreeSitter for better syntax highlighting and code understanding
@@ -264,10 +269,6 @@ vim.g.NERDDefaultAlign = 'left'
 vim.g.NERDSpaceDelims = 1
 vim.keymap.set('v', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
 vim.keymap.set('n', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
-
--- NvimTree
-vim.keymap.set('n', ',d', ':NvimTreeToggle<CR>', { silent = true, desc = "Toggle file tree" })
-vim.keymap.set('n', ',n', ':NvimTreeFindFile<CR>', { silent = true, desc = "Find file in tree" })
 
 -- Key mappings
 vim.keymap.set('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { desc = "Edit nvim config" })
