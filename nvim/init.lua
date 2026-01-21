@@ -48,6 +48,13 @@ require("lazy").setup({
 
   -- Tools
   { "ibhagwan/fzf-lua",
+    cmd = "FzfLua",
+    keys = {
+      { ",f", function() require("fzf-lua").git_files() end, desc = "Find git files" },
+      { ",r", function() require("fzf-lua").live_grep() end, desc = "Live grep" },
+      { "<C-P>", function() require("fzf-lua").files() end, desc = "Find files" },
+      { "<F3>", function() require("fzf-lua").buffers() end, mode = { "n", "v", "i" }, desc = "List buffers" },
+    },
     build = function()
       -- Auto-install fzf if needed
       local function install_fzf()
@@ -182,13 +189,111 @@ require("lazy").setup({
 
   -- LSP and completion
   { "neovim/nvim-lspconfig" },
-  { "hrsh7th/nvim-cmp" },
-  { "hrsh7th/cmp-nvim-lsp" },
-  { "hrsh7th/cmp-buffer" },
-  { "hrsh7th/cmp-path" },
-  { "hrsh7th/cmp-cmdline" },
-  { "L3MON4D3/LuaSnip" },
-  { "saadparwaiz1/cmp_luasnip" },
+  { "hrsh7th/nvim-cmp",
+    event = { "InsertEnter", "CmdlineEnter" },
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "L3MON4D3/LuaSnip",
+      "saadparwaiz1/cmp_luasnip",
+    },
+    config = function()
+      local cmp = require('cmp')
+      local luasnip = require('luasnip')
+
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        formatting = {
+          format = function(entry, vim_item)
+            local menu = ({
+              nvim_lsp = "[LSP]",
+              luasnip = "[Snippet]",
+              buffer = "[Buffer]",
+              path = "[Path]",
+              cmdline = "[Cmd]",
+            })[entry.source.name]
+            vim_item.menu = menu
+            return vim_item
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<C-j>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<C-k>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+        }, {
+          { name = 'buffer' },
+          { name = 'path' },
+        }),
+      })
+
+      -- Cmdline completion
+      cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = { { name = 'buffer' } }
+      })
+
+      local cmdline_mappings = cmp.mapping.preset.cmdline()
+      cmdline_mappings['<C-j>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_next_item() else fallback() end
+      end, {'c'})
+      cmdline_mappings['<C-k>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_prev_item() else fallback() end
+      end, {'c'})
+      cmdline_mappings['<Down>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_next_item() else fallback() end
+      end, {'c'})
+      cmdline_mappings['<Up>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_prev_item() else fallback() end
+      end, {'c'})
+
+      cmp.setup.cmdline(':', {
+        mapping = cmdline_mappings,
+        sources = { { name = 'cmdline' } },
+        completion = { autocomplete = false }
+      })
+    end,
+  },
   { "stevearc/conform.nvim" },
   { "ray-x/lsp_signature.nvim" },
 
@@ -283,17 +388,9 @@ vim.cmd([[
     autocmd BufWritePost ~/.config/nvim/init.lua source <afile>
   augroup end
 ]])
-vim.keymap.set('n', ',f', function() require("fzf-lua").git_files() end, { desc = "Find git files" })
-vim.keymap.set('n', ',r', function() require("fzf-lua").live_grep() end, { desc = "Live grep" })
 
 -- Expand %% to directory of current file in command mode
 vim.keymap.set('c', '%%', [[<C-R>=expand('%:p:h').'/'<CR>]], { desc = "Expand to file dir" })
-
--- FZF-Lua
-vim.keymap.set('n', '<C-P>', function() require("fzf-lua").files() end, { desc = "Find files" })
-vim.keymap.set('n', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
-vim.keymap.set('v', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
-vim.keymap.set('i', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
 
 -- Better visual mode indenting
 vim.keymap.set('v', '<', '<gv', { desc = "Indent left and reselect" })
@@ -363,132 +460,13 @@ local on_attach = function(client, bufnr)
   }, bufnr)
 end
 
--- Setup nvim-cmp
-local cmp = require('cmp')
-local luasnip = require('luasnip')
-
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  formatting = {
-    format = function(entry, vim_item)
-      -- Show source in completion menu
-      local menu = ({
-        nvim_lsp = "[LSP]",
-        luasnip = "[Snippet]",
-        buffer = "[Buffer]",
-        path = "[Path]",
-        cmdline = "[Cmd]",
-      })[entry.source.name]
-
-      vim_item.menu = menu
-      return vim_item
-    end,
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-j>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<C-k>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-  }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  }, {
-    { name = 'buffer' },
-    { name = 'path' },
-  }),
-})
-
--- Setup cmdline completion
-cmp.setup.cmdline('/', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' }
-  }
-})
-
--- Enable command line completion only on Tab press, not automatically
-local cmdline_mappings = cmp.mapping.preset.cmdline()
-
--- Add custom mappings for command-line mode
-cmdline_mappings['<C-j>'] = cmp.mapping(function(fallback)
-  if cmp.visible() then
-    cmp.select_next_item()
-  else
-    fallback()
-  end
-end, {'c'})
-
-cmdline_mappings['<C-k>'] = cmp.mapping(function(fallback)
-  if cmp.visible() then
-    cmp.select_prev_item()
-  else
-    fallback()
-  end
-end, {'c'})
-
-cmdline_mappings['<Down>'] = cmp.mapping(function(fallback)
-  if cmp.visible() then
-    cmp.select_next_item()
-  else
-    fallback()
-  end
-end, {'c'})
-
-cmdline_mappings['<Up>'] = cmp.mapping(function(fallback)
-  if cmp.visible() then
-    cmp.select_prev_item()
-  else
-    fallback()
-  end
-end, {'c'})
-
-cmp.setup.cmdline(':', {
-  mapping = cmdline_mappings,
-  sources = {
-    { name = 'cmdline' }
-  },
-  completion = {
-    autocomplete = false -- Only show completion when requested
-  }
-})
-
--- Setup LSP capabilities with nvim-cmp
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- Setup LSP capabilities with nvim-cmp (loaded lazily, so use a function)
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- Extend with cmp capabilities when available
+local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+if ok then
+  capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+end
 
 -- Initialize language servers
 -- TS configuration moved to the lazy-loading configuration above

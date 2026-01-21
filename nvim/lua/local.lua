@@ -1,6 +1,0 @@
--- Local configuration that can be modified without affecting version control
--- This file can be used for machine-specific settings
---
--- Examples:
---   vim.opt.guifont = "JetBrains Mono:h14"
---   vim.g.copilot_enabled = false
