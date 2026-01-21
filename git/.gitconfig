@@ -40,3 +40,5 @@
 [push]
 	followTags = true
 
+[safe]
+	directory = /Users/pesho/.local/share/nvim/lazy/copilot.vim

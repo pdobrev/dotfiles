@@ -144,31 +144,31 @@ require("lazy").setup({
 
 
   -- AI
-  -- { "github/copilot.vim",
-  --   config = function()
-  --     vim.g.copilot_no_tab_map = true
-  --     vim.g.copilot_assume_mapped = true
-  --     vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
-  --   end
-  -- },
-
-  { "augmentcode/augment.vim",
+  { "github/copilot.vim",
     config = function()
-      -- Set up key mappings similar to copilot using vim commands
-      vim.cmd([[
-        " Use Ctrl-Y to accept a suggestion
-        inoremap <c-y> <cmd>call augment#Accept()<cr>
-
-        " Use enter to accept a suggestion, falling back to a newline if no suggestion is available
-        " inoremap <cr> <cmd>call augment#Accept("\n")<cr>
-
-        " Toggle Augment chat with <leader>a
-        nnoremap <leader>ac :Augment chat<cr>
-        vnoremap <leader>ac :Augment chat<CR>
-        nnoremap <leader>at :Augment chat-toggle<CR>
-      ]])
+      vim.g.copilot_no_tab_map = true
+      vim.g.copilot_assume_mapped = true
+      vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
     end
   },
+
+  -- { "augmentcode/augment.vim",
+  --   config = function()
+  --     -- Set up key mappings similar to copilot using vim commands
+  --     vim.cmd([[
+  --       " Use Ctrl-Y to accept a suggestion
+  --       inoremap <c-y> <cmd>call augment#Accept()<cr>
+
+  --       " Use enter to accept a suggestion, falling back to a newline if no suggestion is available
+  --       " inoremap <cr> <cmd>call augment#Accept("\n")<cr>
+
+  --       " Toggle Augment chat with <leader>a
+  --       nnoremap <leader>ac :Augment chat<cr>
+  --       vnoremap <leader>ac :Augment chat<CR>
+  --       nnoremap <leader>at :Augment chat-toggle<CR>
+  --     ]])
+  --   end
+  -- },
 
   { "chrisbra/csv.vim" },
 
@@ -186,9 +186,6 @@ require("lazy").setup({
   { "saadparwaiz1/cmp_luasnip" },
   { "stevearc/conform.nvim" },
   { "ray-x/lsp_signature.nvim" },
-
-  -- TypeScript language server
-  { "neovim/nvim-lspconfig" },
 
   -- CtrlSF
   -- lua/plugins/ctrlsf.lua
@@ -553,41 +550,13 @@ vim.lsp.config.eslint = {
 -- Enable ESLint LSP for appropriate filetypes
 vim.lsp.enable('eslint')
 
--- Diagnostic config similar to coc but optimized for performance
-vim.diagnostic.config({
-  virtual_text = {
-    prefix = '■', -- Use a visible marker for virtual text
-    spacing = 2,  -- Add spacing before the message
-  },
-  signs = true,
-  underline = true,
-  update_in_insert = false, -- Don't update diagnostics in insert mode
-  severity_sort = true,
-  float = {
-    focusable = true, -- Make float windows focusable to allow scrolling
-    source = 'always',
-    header = '',
-    prefix = '',
-    border = 'rounded',
-    max_width = 80,   -- Set maximum width to prevent wrapping
-    format = function(diagnostic)
-      -- Return full diagnostic message without truncation
-      if diagnostic.message then
-        return diagnostic.message
-      end
-      return diagnostic
-    end,
-  },
-  -- Performance improvements
-  update_on_change = false,  -- Only update diagnostics on InsertLeave and BufWrite
-  underline = {
-    severity = { min = vim.diagnostic.severity.WARN }  -- Only underline warnings and errors
-  },
-})
-
--- Configure diagnostics with custom signs
+-- Diagnostic config
 local signs = { Error = "✘", Warn = "▲", Hint = "⚑", Info = "ℹ" }
 vim.diagnostic.config({
+  virtual_text = {
+    prefix = '■',
+    spacing = 2,
+  },
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = signs.Error,
@@ -601,8 +570,26 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = "DiagnosticSignHint",
       [vim.diagnostic.severity.INFO] = "DiagnosticSignInfo",
     },
-    numhl = "", -- Optional: Matches your original empty numhl
+    numhl = "",
   },
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    focusable = true,
+    source = 'always',
+    header = '',
+    prefix = '',
+    border = 'rounded',
+    max_width = 80,
+    format = function(diagnostic)
+      if diagnostic.message then
+        return diagnostic.message
+      end
+      return diagnostic
+    end,
+  },
+  update_on_change = false,
 })
 
 -- Custom diagnostic navigation that silently does nothing when no diagnostics exist
@@ -610,7 +597,7 @@ local goto_next = function()
   local diagnostics = vim.diagnostic.get(0)
   if #diagnostics > 0 then
     vim.diagnostic.goto_next({
-      float = false,    -- Don't show floating window
+      float = false,
       severity_sort = true,
     })
   end
@@ -620,7 +607,7 @@ local goto_prev = function()
   local diagnostics = vim.diagnostic.get(0)
   if #diagnostics > 0 then
     vim.diagnostic.goto_prev({
-      float = false,    -- Don't show floating window
+      float = false,
       severity_sort = true,
     })
   end
@@ -665,8 +652,8 @@ local open_full_diagnostic_float = function()
   end
 end
 
-vim.keymap.set('n', ']g', goto_next, { noremap = true, silent = true })
 vim.keymap.set('n', '[g', goto_prev, { noremap = true, silent = true })
+vim.keymap.set('n', ']g', goto_next, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>e', open_diagnostic_float, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>E', open_full_diagnostic_float, { noremap = true, silent = true, desc = "Show full error message" })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
