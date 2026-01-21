@@ -91,7 +91,7 @@ require("lazy").setup({
         winopts = {
           preview = {
             default = "builtin",
-            delay = 30,        -- Slightly reduced preview delay
+            delay = 150,       -- Delay preview until file list loads first
             title = false,     -- Disable title
             delay_syntax = 150, -- Delay syntax highlighting even more
           },
@@ -114,9 +114,9 @@ require("lazy").setup({
           },
         },
         files = {
-          fd_opts = "--color=never --type f --hidden --follow --exclude .git --max-depth 10", -- Limit depth for faster results
+          cmd = "fd --color=never --type f --hidden --follow --exclude .git --max-depth 10",
           multiprocess = true, -- Speed up file operations
-          max_results = 1000,  -- Limit results for faster display
+          max_results = 100,   -- Limit results for faster display
           file_icons = false,  -- Disable file icons
           git_file_shared_list = true, -- Share file list with git_files
           use_cache = true,   -- Cache results for reuse
