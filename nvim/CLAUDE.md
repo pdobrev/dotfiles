@@ -15,7 +15,7 @@
 - **Lua style**: 
   - Use 2-space indentation for lua files
   - Prefer `vim.opt` over `vim.o` for options
-  - Use `vim.api.nvim_set_keymap` for key mappings
+  - Use `vim.keymap.set` for key mappings (not `vim.api.nvim_set_keymap`)
   - Organize plugins by functionality
 - **Naming**: Use descriptive names for functions and variables
 - **Functions**: Prefer Lua functions over Vim functions when possible

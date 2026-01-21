@@ -1,6 +1,6 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -148,7 +148,7 @@ require("lazy").setup({
     config = function()
       vim.g.copilot_no_tab_map = true
       vim.g.copilot_assume_mapped = true
-      vim.api.nvim_set_keymap('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true })
+      vim.keymap.set('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true, desc = "Accept Copilot suggestion" })
     end
   },
 
@@ -237,7 +237,6 @@ if vim.fn.isdirectory(swap_dir) == 0 then
 end
 
 vim.opt.directory = swap_dir
-vim.opt.lazyredraw = true
 vim.opt.ruler = true
 vim.opt.showcmd = true
 vim.opt.number = true
@@ -263,18 +262,18 @@ vim.cmd("colorscheme gruvbox")
 -- NERD Commenter
 vim.g.NERDDefaultAlign = 'left'
 vim.g.NERDSpaceDelims = 1
-vim.api.nvim_set_keymap('v', '++', '<plug>NERDCommenterToggle', {})
-vim.api.nvim_set_keymap('n', '++', '<plug>NERDCommenterToggle', {})
+vim.keymap.set('v', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
+vim.keymap.set('n', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
 
 -- NvimTree
-vim.api.nvim_set_keymap('n', ',d', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ',n', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', ',d', ':NvimTreeToggle<CR>', { silent = true, desc = "Toggle file tree" })
+vim.keymap.set('n', ',n', ':NvimTreeFindFile<CR>', { silent = true, desc = "Find file in tree" })
 
 -- Key mappings
-vim.api.nvim_set_keymap('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { noremap = true })
+vim.keymap.set('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { desc = "Edit nvim config" })
 
 -- Unmap F1 to prevent accidental help opening
-vim.keymap.set({'n', 'i', 'v', 'c', 'o'}, '<F1>', '<Nop>')
+vim.keymap.set({'n', 'i', 'v', 'c', 'o'}, '<F1>', '<Nop>', { desc = "Disabled" })
 
 -- Add autocmd to reload config when saved
 vim.cmd([[
@@ -283,29 +282,29 @@ vim.cmd([[
     autocmd BufWritePost ~/.config/nvim/init.lua source <afile>
   augroup end
 ]])
-vim.api.nvim_set_keymap('n', ',f', '<cmd>lua require("fzf-lua").git_files()<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', ',r', '<cmd>lua require("fzf-lua").live_grep()<CR>', { noremap = true })
+vim.keymap.set('n', ',f', function() require("fzf-lua").git_files() end, { desc = "Find git files" })
+vim.keymap.set('n', ',r', function() require("fzf-lua").live_grep() end, { desc = "Live grep" })
 
 -- Expand %% to directory of current file in command mode
-vim.api.nvim_set_keymap('c', '%%', [[<C-R>=expand('%:p:h').'/'<CR>]], { noremap = true })
+vim.keymap.set('c', '%%', [[<C-R>=expand('%:p:h').'/'<CR>]], { desc = "Expand to file dir" })
 
 -- FZF-Lua
-vim.api.nvim_set_keymap('n', '<C-P>', '<cmd>lua require("fzf-lua").files()<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<F3>', '<cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
-vim.api.nvim_set_keymap('v', '<F3>', '<Esc><cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
-vim.api.nvim_set_keymap('i', '<F3>', '<Esc><cmd>lua require("fzf-lua").buffers()<CR>', { noremap = true })
+vim.keymap.set('n', '<C-P>', function() require("fzf-lua").files() end, { desc = "Find files" })
+vim.keymap.set('n', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
+vim.keymap.set('v', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
+vim.keymap.set('i', '<F3>', function() require("fzf-lua").buffers() end, { desc = "List buffers" })
 
 -- Better visual mode indenting
-vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true })
-vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true })
+vim.keymap.set('v', '<', '<gv', { desc = "Indent left and reselect" })
+vim.keymap.set('v', '>', '>gv', { desc = "Indent right and reselect" })
 
 -- Copy/Paste
-vim.api.nvim_set_keymap('v', '<C-C>', '"+yi', {})
-vim.api.nvim_set_keymap('i', '<C-V>', '<Esc>"+gPi', {})
-vim.api.nvim_set_keymap('i', '<S-Insert>', '<Esc>"+gPi', {})
+vim.keymap.set('v', '<C-C>', '"+yi', { desc = "Copy to clipboard" })
+vim.keymap.set('i', '<C-V>', '<Esc>"+gPi', { desc = "Paste from clipboard" })
+vim.keymap.set('i', '<S-Insert>', '<Esc>"+gPi', { desc = "Paste from clipboard" })
 
 -- Terminal escape
-vim.api.nvim_set_keymap('t', '<C-v><Esc>', '<C-\\><C-n>', { noremap = true })
+vim.keymap.set('t', '<C-v><Esc>', '<C-\\><C-n>', { desc = "Exit terminal mode" })
 
 -- Create a global mapping that doesn't depend on leader key
 vim.api.nvim_create_user_command('FormatBuffer', function()
@@ -313,7 +312,7 @@ vim.api.nvim_create_user_command('FormatBuffer', function()
 end, {})
 
 -- Map Ctrl+f to format in normal mode
-vim.api.nvim_set_keymap('n', '<C-f>', ':FormatBuffer<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-f>', ':FormatBuffer<CR>', { silent = true, desc = "Format buffer" })
 
 -- Custom commands
 vim.api.nvim_create_user_command('FormatJSON', '%!python3 -m json.tool', {})
@@ -327,29 +326,25 @@ local on_attach = function(client, bufnr)
   client.server_capabilities.documentRangeFormattingProvider = false
 
   -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
   -- Mappings
   local opts = { noremap = true, silent = true, buffer = bufnr }
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, opts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-  vim.keymap.set('n', 'gi', function() require("fzf-lua").lsp_implementations() end, opts)
-  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-  vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts) -- signature help in insert mode too
-  vim.keymap.set('n', '<leader>D', function() require("fzf-lua").lsp_typedefs() end, opts)
-  vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-  vim.keymap.set('n', '<leader>ca', function() require("fzf-lua").lsp_code_actions() end, opts)
-  vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump1 = true }) end, opts)
+  local function with_desc(desc)
+    return vim.tbl_extend("force", opts, { desc = desc })
+  end
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, with_desc("Go to declaration"))
+  vim.keymap.set('n', 'gd', function() require("fzf-lua").lsp_definitions() end, with_desc("Go to definition"))
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, with_desc("Hover documentation"))
+  vim.keymap.set('n', 'gi', function() require("fzf-lua").lsp_implementations() end, with_desc("Go to implementation"))
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, with_desc("Signature help"))
+  vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, with_desc("Signature help"))
+  vim.keymap.set('n', '<leader>D', function() require("fzf-lua").lsp_typedefs() end, with_desc("Go to type definition"))
+  vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, with_desc("Rename symbol"))
+  vim.keymap.set('n', '<leader>ca', function() require("fzf-lua").lsp_code_actions() end, with_desc("Code actions"))
+  vim.keymap.set('n', 'gr', function() require("fzf-lua").lsp_references({ jump1 = true }) end, with_desc("Find references"))
   -- Use conform for formatting instead of LSP
-  vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, opts)
-
-  -- Diagnostics
-  vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, opts)
-  vim.keymap.set('n', ']g', vim.diagnostic.goto_next, opts)
-  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-  vim.keymap.set('n', '<leader>q', function() require("fzf-lua").diagnostics_document() end, opts)
-  vim.keymap.set('n', '<leader>Q', function() require("fzf-lua").diagnostics_workspace() end, opts)
+  vim.keymap.set('n', '<leader>f', function() require("conform").format({ async = true }) end, with_desc("Format buffer"))
 
   -- Setup lsp_signature for a gentler signature help experience
   require("lsp_signature").on_attach({
@@ -639,24 +634,25 @@ local open_full_diagnostic_float = function()
     )
 
     local buf = vim.api.nvim_get_current_buf()
-    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-    vim.api.nvim_buf_set_option(buf, "modifiable", true)
+    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].modifiable = true
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(current_diagnostic.message, "\n"))
-    vim.api.nvim_buf_set_option(buf, "modifiable", false)
+    vim.bo[buf].modifiable = false
 
     -- Add keymaps to close window
-    vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":close<CR>", { noremap = true, silent = true })
+    vim.keymap.set("n", "q", ":close<CR>", { buffer = buf, silent = true, desc = "Close window" })
+    vim.keymap.set("n", "<Esc>", ":close<CR>", { buffer = buf, silent = true, desc = "Close window" })
   else
     vim.notify("No diagnostic at cursor position", vim.log.levels.INFO)
   end
 end
 
-vim.keymap.set('n', '[g', goto_prev, { noremap = true, silent = true })
-vim.keymap.set('n', ']g', goto_next, { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>e', open_diagnostic_float, { noremap = true, silent = true })
+vim.keymap.set('n', '[g', goto_prev, { noremap = true, silent = true, desc = "Previous diagnostic" })
+vim.keymap.set('n', ']g', goto_next, { noremap = true, silent = true, desc = "Next diagnostic" })
+vim.keymap.set('n', '<leader>e', open_diagnostic_float, { noremap = true, silent = true, desc = "Show diagnostic float" })
 vim.keymap.set('n', '<leader>E', open_full_diagnostic_float, { noremap = true, silent = true, desc = "Show full error message" })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>q', function() require("fzf-lua").diagnostics_document() end, { noremap = true, silent = true, desc = "Document diagnostics" })
+vim.keymap.set('n', '<leader>Q', function() require("fzf-lua").diagnostics_workspace() end, { noremap = true, silent = true, desc = "Workspace diagnostics" })
 
 
 local js_like_formatters = { "oxfmt", "prettierd", "prettier", stop_after_first = true }
@@ -706,7 +702,7 @@ require("conform").setup({
     local name = vim.api.nvim_buf_get_name(bufnr)
     -- If a large file, don't format on save
     local max_filesize = 512 * 1024 -- 512 KB
-    local ok, stats = pcall(vim.loop.fs_stat, name)
+    local ok, stats = pcall(vim.uv.fs_stat, name)
     if ok and stats and stats.size > max_filesize then
       return
     end
@@ -741,7 +737,7 @@ require('nvim-treesitter.configs').setup({
     disable = function(lang, bufnr)
       -- Disable for large files
       local max_filesize = 100 * 1024 -- 100 KB
-      local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(bufnr))
+      local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(bufnr))
       if ok and stats and stats.size > max_filesize then
         return true
       end
@@ -862,6 +858,38 @@ end, { nargs = '?' })
 
 
 -- TypeScript/JavaScript setup
+
+-- Custom indent function for TS/JS (defined globally for indentexpr)
+function _G.GetTSIndent()
+  local lnum = vim.fn.prevnonblank(vim.v.lnum - 1)
+
+  -- No previous line
+  if lnum == 0 then
+    return 0
+  end
+
+  local line = vim.fn.getline(lnum)
+  local ind = vim.fn.indent(lnum)
+  local sw = vim.fn.shiftwidth()
+
+  -- Increase indent after opening brace/bracket/paren or arrow function
+  -- Matches: { or [ or ( at end, => {, or : { (for TypeScript return types)
+  if vim.fn.match(line, "[\\[{(][\\s,]*$") >= 0
+    or vim.fn.match(line, "=>\\s*{\\s*$") >= 0
+    or vim.fn.match(line, ":\\s*{\\s*$") >= 0 then
+    return ind + sw
+  end
+
+  -- Current line closes brace/bracket/paren - decrease indent
+  local current_line = vim.fn.getline(vim.v.lnum)
+  if vim.fn.match(current_line, "^\\s*[\\]})]") >= 0 then
+    return ind - sw
+  end
+
+  -- Default: use same indent as previous non-blank line
+  return ind
+end
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
   callback = function()
@@ -872,36 +900,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.autoindent = true  -- Ensure autoindent is enabled
 
     -- Custom indent expression to handle empty lines properly
-    vim.bo.indentexpr = "GetTSIndent()"
-
-    -- Define the custom indent function
-    vim.cmd([[
-      function! GetTSIndent()
-        let lnum = prevnonblank(v:lnum - 1)
-
-        " No previous line
-        if lnum == 0
-          return 0
-        endif
-
-        let line = getline(lnum)
-        let ind = indent(lnum)
-
-        " Increase indent after opening brace/bracket/paren or arrow function
-        " Matches: { or [ or ( at end, => {, or : { (for TypeScript return types)
-        if line =~ '[{(\[][\s,]*$' || line =~ '=>\s*{\s*$' || line =~ ':\s*{\s*$'
-          return ind + shiftwidth()
-        endif
-
-        " Current line closes brace/bracket/paren - decrease indent
-        if getline(v:lnum) =~ '^\s*[}\]\)]'
-          return ind - shiftwidth()
-        endif
-
-        " Default: use same indent as previous non-blank line
-        return ind
-      endfunction
-    ]])
+    vim.bo.indentexpr = "v:lua.GetTSIndent()"
 
     -- Keymaps for TypeScript
     vim.keymap.set("n", "<leader>oi", "<cmd>OrganizeImports<CR>", { buffer = true, desc = "Organize Imports" })
