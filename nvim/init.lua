@@ -114,7 +114,8 @@ require("lazy").setup({
           },
         },
         files = {
-          cmd = "fd --color=never --type f --hidden --follow --exclude .git --max-depth 10",
+          -- cmd = "fd --color=never --type f --hidden --follow --exclude .git --max-depth 10",
+          cmd = "fd --color=never --type f --hidden --exclude .git --max-depth 10",
           multiprocess = true, -- Speed up file operations
           max_results = 100,   -- Limit results for faster display
           file_icons = false,  -- Disable file icons
@@ -160,7 +161,7 @@ require("lazy").setup({
     config = function()
       vim.g.copilot_no_tab_map = true
       vim.g.copilot_assume_mapped = true
-      vim.keymap.set('i', '<C-y>', 'copilot#Accept("<CR>")', { silent = true, expr = true, script = true, desc = "Accept Copilot suggestion" })
+      vim.keymap.set('i', '<C-y>', 'copilot#Accept("\\<CR>")', { silent = true, expr = true, replace_keycodes = false, desc = "Accept Copilot suggestion" })
     end
   },
 
