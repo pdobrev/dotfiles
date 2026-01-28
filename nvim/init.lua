@@ -151,7 +151,6 @@ require("lazy").setup({
     end
   },
 
-
   -- AI
   { "github/copilot.vim",
     config = function()
@@ -160,24 +159,6 @@ require("lazy").setup({
       vim.keymap.set('i', '<C-y>', 'copilot#Accept("\\<CR>")', { silent = true, expr = true, replace_keycodes = false, desc = "Accept Copilot suggestion" })
     end
   },
-
-  -- { "augmentcode/augment.vim",
-  --   config = function()
-  --     -- Set up key mappings similar to copilot using vim commands
-  --     vim.cmd([[
-  --       " Use Ctrl-Y to accept a suggestion
-  --       inoremap <c-y> <cmd>call augment#Accept()<cr>
-
-  --       " Use enter to accept a suggestion, falling back to a newline if no suggestion is available
-  --       " inoremap <cr> <cmd>call augment#Accept("\n")<cr>
-
-  --       " Toggle Augment chat with <leader>a
-  --       nnoremap <leader>ac :Augment chat<cr>
-  --       vnoremap <leader>ac :Augment chat<CR>
-  --       nnoremap <leader>at :Augment chat-toggle<CR>
-  --     ]])
-  --   end
-  -- },
 
   { "chrisbra/csv.vim" },
 
@@ -369,9 +350,6 @@ vim.opt.visualbell = false
 
 -- Set colorscheme
 vim.cmd("colorscheme gruvbox")
-
-
--- Comment.nvim is configured in the plugin spec above
 
 -- Key mappings
 vim.keymap.set('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { desc = "Edit nvim config" })
@@ -656,8 +634,8 @@ require("conform").setup({
 
     trim_whitespace = {
       command = "sed",
-      args = { "-i", "'s/\\s\\+$//'" },
-      stdin = false,
+      args = { "'s/\\s\\+$//'" },
+      stdin = true,
     },
   },
 
@@ -764,7 +742,6 @@ require('nvim-treesitter.configs').setup({
   },
 })
 
-
 -- TypeScript-specific commands (for ts_ls)
 vim.api.nvim_create_user_command('OrganizeImports', function()
   vim.lsp.buf.code_action({
@@ -813,17 +790,6 @@ vim.api.nvim_create_user_command('InstallFormatters', function()
     end
   end
 end, {})
-
--- Helper command to install TreeSitter parsers
-vim.api.nvim_create_user_command('TSInstall', function(opts)
-  local parser = opts.args
-  if parser == "" then
-    print("Please specify a parser to install, or use :TSUpdate to update all parsers")
-    return
-  end
-  vim.cmd('TSInstall ' .. parser)
-end, { nargs = '?' })
-
 
 -- TypeScript/JavaScript setup
 
