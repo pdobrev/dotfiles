@@ -73,7 +73,7 @@ setopt HIST_IGNORE_SPACE         # Don't record commands starting with space
 setopt HIST_FIND_NO_DUPS         # Don't show duplicates when searching
 setopt HIST_SAVE_NO_DUPS         # Don't write duplicates to file
 setopt HIST_VERIFY               # Show command before executing from history
-setopt SHARE_HISTORY             # Share history between all sessions
+# setopt SHARE_HISTORY             # Share history between all sessions
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/pesho/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pesho/Downloads/google-cloud-sdk/path.zsh.inc'; fi
@@ -114,7 +114,6 @@ esac
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-alias claude="/Users/pesho/.claude/local/claude"
 
 # opencode
 export PATH=/Users/pesho/.opencode/bin:$PATH

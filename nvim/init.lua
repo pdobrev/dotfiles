@@ -19,7 +19,6 @@ vim.g.mapleader = " "
 require("lazy").setup({
   -- UI
   { "morhetz/gruvbox", priority = 1000 },
-  { "nvim-tree/nvim-web-devicons" },
   { "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     cmd = { "NvimTreeToggle", "NvimTreeFindFile", "NvimTreeOpen" },
@@ -31,6 +30,7 @@ require("lazy").setup({
   },
   -- TreeSitter for better syntax highlighting and code understanding
   { "nvim-treesitter/nvim-treesitter",
+    event = { "BufReadPost", "BufNewFile" },
     build = ":TSUpdate",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
@@ -55,35 +55,6 @@ require("lazy").setup({
       { "<C-P>", function() require("fzf-lua").files() end, desc = "Find files" },
       { "<F3>", function() require("fzf-lua").buffers() end, mode = { "n", "v", "i" }, desc = "List buffers" },
     },
-    build = function()
-      -- Auto-install fzf if needed
-      local function install_fzf()
-        local is_mac = vim.fn.has('macunix') == 1
-
-        if is_mac then
-          print("Installing fzf with Homebrew...")
-          vim.fn.system({"brew", "install", "fzf"})
-          if vim.v.shell_error ~= 0 then
-            print("Error installing fzf with Homebrew. Please install manually.")
-            return false
-          end
-          print("fzf installed successfully!")
-          return true
-        else
-          -- For Linux or Windows, provide instructions
-          print("Please install fzf manually:")
-          print("- Linux: Use your package manager (apt install fzf, pacman -S fzf, etc.)")
-          print("- Windows: Use scoop, chocolatey, or download from GitHub")
-          return false
-        end
-      end
-
-      -- Check if fzf exists and install if needed
-      if vim.fn.executable('fzf') ~= 1 then
-        install_fzf()
-      end
-    end,
-
     config = function()
       require("fzf-lua").setup({
         -- Use system fzf
@@ -153,7 +124,32 @@ require("lazy").setup({
       })
     end
   },
-  { "scrooloose/nerdcommenter" },
+  { "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup({
+        padding = true,        -- Add space after comment delimiter (like NERDSpaceDelims = 1)
+        sticky = true,
+        ignore = nil,
+        toggler = {
+          line = 'gcc',        -- Normal mode toggle
+          block = 'gbc',
+        },
+        opleader = {
+          line = 'gc',         -- Visual mode toggle
+          block = 'gb',
+        },
+        extra = {
+          above = 'gcO',
+          below = 'gco',
+          eol = 'gcA',
+        },
+        mappings = {
+          basic = true,
+          extra = true,
+        },
+      })
+    end
+  },
 
 
   -- AI
@@ -295,8 +291,8 @@ require("lazy").setup({
       })
     end,
   },
-  { "stevearc/conform.nvim" },
-  { "ray-x/lsp_signature.nvim" },
+  { "stevearc/conform.nvim", cmd = { "Format", "FormatBuffer" }, event = "BufWritePre" },
+  { "ray-x/lsp_signature.nvim", event = "LspAttach" },
 
   -- CtrlSF
   -- lua/plugins/ctrlsf.lua
@@ -333,12 +329,17 @@ require("lazy").setup({
   }
 })
 
+-- Performance settings
+vim.opt.lazyredraw = true
+vim.opt.ttyfast = true
+vim.opt.updatetime = 300
+
 -- General settings
 vim.opt.mouse = "a"
 vim.opt.cursorline = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-vim.opt.clipboard = "unnamed"
+vim.opt.clipboard = "unnamedplus"
 vim.opt.signcolumn = "yes" -- Always show the sign column to prevent text shifting
 
 -- Create directory for swap files if it doesn't exist
@@ -370,11 +371,7 @@ vim.opt.visualbell = false
 vim.cmd("colorscheme gruvbox")
 
 
--- NERD Commenter
-vim.g.NERDDefaultAlign = 'left'
-vim.g.NERDSpaceDelims = 1
-vim.keymap.set('v', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
-vim.keymap.set('n', '++', '<plug>NERDCommenterToggle', { remap = true, desc = "Toggle comment" })
+-- Comment.nvim is configured in the plugin spec above
 
 -- Key mappings
 vim.keymap.set('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { desc = "Edit nvim config" })
@@ -383,12 +380,10 @@ vim.keymap.set('n', ',v', ':e ~/.config/nvim/init.lua<CR>', { desc = "Edit nvim 
 vim.keymap.set({'n', 'i', 'v', 'c', 'o'}, '<F1>', '<Nop>', { desc = "Disabled" })
 
 -- Add autocmd to reload config when saved
-vim.cmd([[
-  augroup config_reload
-    autocmd!
-    autocmd BufWritePost ~/.config/nvim/init.lua source <afile>
-  augroup end
-]])
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = vim.fn.expand("~/.config/nvim/init.lua"),
+  command = "source <afile>",
+})
 
 -- Expand %% to directory of current file in command mode
 vim.keymap.set('c', '%%', [[<C-R>=expand('%:p:h').'/'<CR>]], { desc = "Expand to file dir" })
@@ -470,10 +465,10 @@ if ok then
 end
 
 -- Initialize language servers
--- TS configuration moved to the lazy-loading configuration above
--- IMPORTANT: Don't remove this comment section - it reminds you where the TS config now lives
+-- Load nvim-lspconfig to register server configurations (required for vim.lsp.config)
+require('lspconfig')
 
--- TypeScript language server setup
+-- TypeScript language server setup using vim.lsp.config
 vim.lsp.config.ts_ls = {
   cmd = { 'typescript-language-server', '--stdio' },
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
@@ -496,33 +491,26 @@ vim.lsp.config.ts_ls = {
   },
 }
 
--- Enable TypeScript LSP for appropriate filetypes
 vim.lsp.enable('ts_ls')
 
--- ESLint LSP setup - will only activate in projects with ESLint config
+-- ESLint LSP setup using vim.lsp.config
 vim.lsp.config.eslint = {
   cmd = { 'vscode-eslint-language-server', '--stdio' },
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  -- Only start ESLint when a config file is found (excluding node_modules)
   root_markers = {
-    '.eslintrc',
-    '.eslintrc.js',
-    '.eslintrc.json',
-    '.eslintrc.yml',
-    '.eslintrc.yaml',
-    '.eslintrc.cjs',
-    'eslint.config.js',
-    'eslint.config.mjs',
-    'eslint.config.cjs',
-    'eslint.config.ts',
-    'eslint.config.mts',
-    'eslint.config.cts'
+    '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', '.eslintrc.yaml', '.eslintrc.cjs',
+    'eslint.config.js', 'eslint.config.mjs', 'eslint.config.cjs', 'eslint.config.ts', 'eslint.config.mts', 'eslint.config.cts'
   },
   on_attach = on_attach,
   capabilities = capabilities,
+  settings = {
+    eslint = {
+      useFlatConfig = true,
+      workingDirectories = { { mode = "auto" } },
+    }
+  },
 }
 
--- Enable ESLint LSP for appropriate filetypes
 vim.lsp.enable('eslint')
 
 -- Diagnostic config
@@ -663,7 +651,7 @@ require("conform").setup({
       --   return vim.fs.find(".oxfmtrc.json", { path = ctx.filename, upward = true })[1] ~= nil
       -- end,
       -- When stdin=false, use this template to generate the temporary file that gets formatted
-      tmpfile_format = ".conform.$RANDOM.$FILENAME",
+      tmpfile_format = "/tmp/.conform.$RANDOM.$FILENAME",
     },
 
     trim_whitespace = {
