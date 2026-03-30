@@ -148,6 +148,8 @@ require("lazy").setup({
           extra = true,
         },
       })
+      vim.keymap.set('n', '++', '<Plug>(comment_toggle_linewise_current)', { desc = "Toggle comment" })
+      vim.keymap.set('x', '++', '<Plug>(comment_toggle_linewise_visual)', { desc = "Toggle comment" })
     end
   },
 
@@ -471,7 +473,7 @@ vim.lsp.config.ts_ls = {
 
 vim.lsp.enable('ts_ls')
 
--- ESLint LSP setup using vim.lsp.config
+-- ESLint LSP setup using vim.lsp.config with worktree support
 vim.lsp.config.eslint = {
   cmd = { 'vscode-eslint-language-server', '--stdio' },
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
@@ -484,7 +486,8 @@ vim.lsp.config.eslint = {
   settings = {
     eslint = {
       useFlatConfig = true,
-      workingDirectories = { { mode = "auto" } },
+      workingDirectories = { { mode = "location" } },
+      validate = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
     }
   },
 }

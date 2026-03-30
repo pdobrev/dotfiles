@@ -105,6 +105,14 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+if command -v pnpm >/dev/null 2>&1; then
+  _pnpm_lazy_completion() {
+    eval "$(pnpm completion zsh)"
+    unfunction _pnpm_lazy_completion
+    compdef _pnpm_completion pnpm
+  }
+  compdef _pnpm_lazy_completion pnpm
+fi
 # pnpm end
 
 # bun completions
