@@ -30,10 +30,11 @@ require("lazy").setup({
   },
   -- TreeSitter for better syntax highlighting and code understanding
   { "nvim-treesitter/nvim-treesitter",
-    event = { "BufReadPost", "BufNewFile" },
+    lazy = false,
+    branch = "main",
     build = ":TSUpdate",
     dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
+      { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
     },
   },
 
@@ -668,82 +669,165 @@ vim.api.nvim_create_user_command('Format', function()
   })
 end, {})
 
--- TreeSitter configuration with optimized performance
-require('nvim-treesitter.configs').setup({
-  ensure_installed = {
-    "javascript", "typescript", "tsx", "json", "html", "css",
-    "lua", "vim", "vimdoc", "bash", "markdown", "markdown_inline"
-  },
-  -- Improve startup time by delaying parser installations
-  sync_install = false,
-  -- Only install parsers when actually needed
-  auto_install = false,  -- Disable automatic installation for better control
+-- TreeSitter configuration for Neovim 0.12+
+local treesitter_parsers = {
+  "bash", "css", "html", "javascript", "json", "lua",
+  "markdown", "markdown_inline", "gitcommit", "tsx", "typescript", "vim", "vimdoc",
+}
 
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-    -- Disable slow modules
-    disable = function(lang, bufnr)
-      -- Disable for large files
-      local max_filesize = 100 * 1024 -- 100 KB
-      local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(bufnr))
-      if ok and stats and stats.size > max_filesize then
-        return true
+local treesitter_max_filesize = 100 * 1024 -- 100 KB
+
+local function treesitter_disabled(bufnr)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  if name == "" then
+    return false
+  end
+
+  local ok, stats = pcall(vim.uv.fs_stat, name)
+  return ok and stats and stats.size > treesitter_max_filesize or false
+end
+
+local has_treesitter, treesitter = pcall(require, 'nvim-treesitter')
+
+if has_treesitter and treesitter.setup and treesitter.get_installed then
+  treesitter.setup()
+
+  local installed_parsers = {}
+  for _, parser in ipairs(treesitter.get_installed()) do
+    installed_parsers[parser] = true
+  end
+
+  local missing_parsers = {}
+  for _, parser in ipairs(treesitter_parsers) do
+    if not installed_parsers[parser] then
+      table.insert(missing_parsers, parser)
+    end
+  end
+
+  if #missing_parsers > 0 and treesitter.install then
+    treesitter.install(missing_parsers)
+  end
+
+  vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup('treesitter-setup', { clear = true }),
+    callback = function(args)
+      if treesitter_disabled(args.buf) then
+        return
       end
-      return false
+
+      if pcall(vim.treesitter.start, args.buf) then
+        vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
     end,
-  },
+  })
 
-  indent = {
-    enable = true,
-  },
-
-  -- Incremental selection based on the named nodes from the grammar
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "<C-Space>",
-      node_incremental = "<C-Space>",
-      scope_incremental = "<nop>",
-      node_decremental = "<bs>",
-    },
-  },
-
-  -- Text objects for selections, movements, swaps, and more
-  textobjects = {
+  local textobjects = require('nvim-treesitter-textobjects')
+  textobjects.setup({
     select = {
-      enable = true,
-      lookahead = true, -- Automatically jump forward to textobj
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-      },
+      lookahead = true,
     },
     move = {
+      set_jumps = true,
+    },
+  })
+
+  local ts_select = require('nvim-treesitter-textobjects.select')
+  vim.keymap.set({ 'x', 'o' }, 'af', function()
+    ts_select.select_textobject('@function.outer', 'textobjects')
+  end, { desc = 'Select around function' })
+  vim.keymap.set({ 'x', 'o' }, 'if', function()
+    ts_select.select_textobject('@function.inner', 'textobjects')
+  end, { desc = 'Select inside function' })
+  vim.keymap.set({ 'x', 'o' }, 'ac', function()
+    ts_select.select_textobject('@class.outer', 'textobjects')
+  end, { desc = 'Select around class' })
+  vim.keymap.set({ 'x', 'o' }, 'ic', function()
+    ts_select.select_textobject('@class.inner', 'textobjects')
+  end, { desc = 'Select inside class' })
+
+  local ts_move = require('nvim-treesitter-textobjects.move')
+  vim.keymap.set({ 'n', 'x', 'o' }, ']f', function()
+    ts_move.goto_next_start('@function.outer', 'textobjects')
+  end, { desc = 'Next function start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']c', function()
+    ts_move.goto_next_start('@class.outer', 'textobjects')
+  end, { desc = 'Next class start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']F', function()
+    ts_move.goto_next_end('@function.outer', 'textobjects')
+  end, { desc = 'Next function end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']C', function()
+    ts_move.goto_next_end('@class.outer', 'textobjects')
+  end, { desc = 'Next class end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[f', function()
+    ts_move.goto_previous_start('@function.outer', 'textobjects')
+  end, { desc = 'Previous function start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[c', function()
+    ts_move.goto_previous_start('@class.outer', 'textobjects')
+  end, { desc = 'Previous class start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[F', function()
+    ts_move.goto_previous_end('@function.outer', 'textobjects')
+  end, { desc = 'Previous function end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[C', function()
+    ts_move.goto_previous_end('@class.outer', 'textobjects')
+  end, { desc = 'Previous class end' })
+else
+  require('nvim-treesitter.configs').setup({
+    ensure_installed = treesitter_parsers,
+    sync_install = false,
+    auto_install = false,
+    highlight = {
       enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        ["]f"] = "@function.outer",
-        ["]c"] = "@class.outer",
-      },
-      goto_next_end = {
-        ["]F"] = "@function.outer",
-        ["]C"] = "@class.outer",
-      },
-      goto_previous_start = {
-        ["[f"] = "@function.outer",
-        ["[c"] = "@class.outer",
-      },
-      goto_previous_end = {
-        ["[F"] = "@function.outer",
-        ["[C"] = "@class.outer",
+      additional_vim_regex_highlighting = false,
+      disable = function(_, bufnr)
+        return treesitter_disabled(bufnr)
+      end,
+    },
+    indent = {
+      enable = true,
+    },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = '<C-Space>',
+        node_incremental = '<C-Space>',
+        scope_incremental = '<nop>',
+        node_decremental = '<bs>',
       },
     },
-  },
-})
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true,
+        keymaps = {
+          ['af'] = '@function.outer',
+          ['if'] = '@function.inner',
+          ['ac'] = '@class.outer',
+          ['ic'] = '@class.inner',
+        },
+      },
+      move = {
+        enable = true,
+        set_jumps = true,
+        goto_next_start = {
+          [']f'] = '@function.outer',
+          [']c'] = '@class.outer',
+        },
+        goto_next_end = {
+          [']F'] = '@function.outer',
+          [']C'] = '@class.outer',
+        },
+        goto_previous_start = {
+          ['[f'] = '@function.outer',
+          ['[c'] = '@class.outer',
+        },
+        goto_previous_end = {
+          ['[F'] = '@function.outer',
+          ['[C'] = '@class.outer',
+        },
+      },
+    },
+  })
+end
 
 -- TypeScript-specific commands (for ts_ls)
 vim.api.nvim_create_user_command('OrganizeImports', function()
