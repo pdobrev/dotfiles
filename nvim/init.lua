@@ -33,13 +33,128 @@ require("lazy").setup({
     lazy = false,
     branch = "main",
     build = ":TSUpdate",
-    dependencies = {
-      { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
+  },
+
+  { "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    keys = {
+      {
+        'af',
+        function()
+          require('nvim-treesitter-textobjects.select').select_textobject('@function.outer', 'textobjects')
+        end,
+        mode = { 'x', 'o' },
+        desc = 'Select around function',
+      },
+      {
+        'if',
+        function()
+          require('nvim-treesitter-textobjects.select').select_textobject('@function.inner', 'textobjects')
+        end,
+        mode = { 'x', 'o' },
+        desc = 'Select inside function',
+      },
+      {
+        'ac',
+        function()
+          require('nvim-treesitter-textobjects.select').select_textobject('@class.outer', 'textobjects')
+        end,
+        mode = { 'x', 'o' },
+        desc = 'Select around class',
+      },
+      {
+        'ic',
+        function()
+          require('nvim-treesitter-textobjects.select').select_textobject('@class.inner', 'textobjects')
+        end,
+        mode = { 'x', 'o' },
+        desc = 'Select inside class',
+      },
+      {
+        ']f',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_next_start('@function.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Next function start',
+      },
+      {
+        ']c',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_next_start('@class.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Next class start',
+      },
+      {
+        ']F',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_next_end('@function.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Next function end',
+      },
+      {
+        ']C',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_next_end('@class.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Next class end',
+      },
+      {
+        '[f',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_previous_start('@function.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Previous function start',
+      },
+      {
+        '[c',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_previous_start('@class.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Previous class start',
+      },
+      {
+        '[F',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_previous_end('@function.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Previous function end',
+      },
+      {
+        '[C',
+        function()
+          require('nvim-treesitter-textobjects.move').goto_previous_end('@class.outer', 'textobjects')
+        end,
+        mode = { 'n', 'x', 'o' },
+        desc = 'Previous class end',
+      },
     },
+    config = function()
+      require('nvim-treesitter-textobjects').setup({
+        select = {
+          lookahead = true,
+        },
+        move = {
+          set_jumps = true,
+        },
+      })
+    end,
   },
 
   -- GitHub
-  { "tpope/vim-fugitive" },
+  { "tpope/vim-fugitive",
+    cmd = {
+      'Git', 'G', 'Gdiffsplit', 'Gvdiffsplit', 'Gedit', 'Gread', 'Gwrite',
+      'Ggrep', 'Glgrep', 'Gclog', 'GBlame', 'GBrowse', 'GMove', 'GDelete',
+      'GRename', 'GRemove', 'GUnlink', 'Gstatus',
+    },
+  },
 
   -- Automatic indentation detection
   { "tpope/vim-sleuth",
@@ -126,36 +241,39 @@ require("lazy").setup({
     end
   },
   { "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup({
-        padding = true,        -- Add space after comment delimiter (like NERDSpaceDelims = 1)
-        sticky = true,
-        ignore = nil,
-        toggler = {
-          line = 'gcc',        -- Normal mode toggle
-          block = 'gbc',
-        },
-        opleader = {
-          line = 'gc',         -- Visual mode toggle
-          block = 'gb',
-        },
-        extra = {
-          above = 'gcO',
-          below = 'gco',
-          eol = 'gcA',
-        },
-        mappings = {
-          basic = true,
-          extra = true,
-        },
-      })
+    event = "VeryLazy",
+    opts = {
+      padding = true,
+      sticky = true,
+      ignore = nil,
+      toggler = {
+        line = 'gcc',
+        block = 'gbc',
+      },
+      opleader = {
+        line = 'gc',
+        block = 'gb',
+      },
+      extra = {
+        above = 'gcO',
+        below = 'gco',
+        eol = 'gcA',
+      },
+      mappings = {
+        basic = true,
+        extra = true,
+      },
+    },
+    config = function(_, opts)
+      require("Comment").setup(opts)
       vim.keymap.set('n', '++', '<Plug>(comment_toggle_linewise_current)', { desc = "Toggle comment" })
       vim.keymap.set('x', '++', '<Plug>(comment_toggle_linewise_visual)', { desc = "Toggle comment" })
-    end
+    end,
   },
 
   -- AI
   { "github/copilot.vim",
+    event = "InsertEnter",
     config = function()
       vim.g.copilot_no_tab_map = true
       vim.g.copilot_assume_mapped = true
@@ -163,10 +281,14 @@ require("lazy").setup({
     end
   },
 
-  { "chrisbra/csv.vim" },
+  { "chrisbra/csv.vim", ft = "csv" },
 
   -- Markdown
-  { "iamcco/markdown-preview.nvim", build = "cd app && npx --yes yarn install" },
+  { "iamcco/markdown-preview.nvim",
+    ft = "markdown",
+    cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle" },
+    build = "cd app && npx --yes yarn install"
+  },
 
   -- LSP and completion
   { "neovim/nvim-lspconfig" },
@@ -721,55 +843,6 @@ if has_treesitter and treesitter.setup and treesitter.get_installed then
     end,
   })
 
-  local textobjects = require('nvim-treesitter-textobjects')
-  textobjects.setup({
-    select = {
-      lookahead = true,
-    },
-    move = {
-      set_jumps = true,
-    },
-  })
-
-  local ts_select = require('nvim-treesitter-textobjects.select')
-  vim.keymap.set({ 'x', 'o' }, 'af', function()
-    ts_select.select_textobject('@function.outer', 'textobjects')
-  end, { desc = 'Select around function' })
-  vim.keymap.set({ 'x', 'o' }, 'if', function()
-    ts_select.select_textobject('@function.inner', 'textobjects')
-  end, { desc = 'Select inside function' })
-  vim.keymap.set({ 'x', 'o' }, 'ac', function()
-    ts_select.select_textobject('@class.outer', 'textobjects')
-  end, { desc = 'Select around class' })
-  vim.keymap.set({ 'x', 'o' }, 'ic', function()
-    ts_select.select_textobject('@class.inner', 'textobjects')
-  end, { desc = 'Select inside class' })
-
-  local ts_move = require('nvim-treesitter-textobjects.move')
-  vim.keymap.set({ 'n', 'x', 'o' }, ']f', function()
-    ts_move.goto_next_start('@function.outer', 'textobjects')
-  end, { desc = 'Next function start' })
-  vim.keymap.set({ 'n', 'x', 'o' }, ']c', function()
-    ts_move.goto_next_start('@class.outer', 'textobjects')
-  end, { desc = 'Next class start' })
-  vim.keymap.set({ 'n', 'x', 'o' }, ']F', function()
-    ts_move.goto_next_end('@function.outer', 'textobjects')
-  end, { desc = 'Next function end' })
-  vim.keymap.set({ 'n', 'x', 'o' }, ']C', function()
-    ts_move.goto_next_end('@class.outer', 'textobjects')
-  end, { desc = 'Next class end' })
-  vim.keymap.set({ 'n', 'x', 'o' }, '[f', function()
-    ts_move.goto_previous_start('@function.outer', 'textobjects')
-  end, { desc = 'Previous function start' })
-  vim.keymap.set({ 'n', 'x', 'o' }, '[c', function()
-    ts_move.goto_previous_start('@class.outer', 'textobjects')
-  end, { desc = 'Previous class start' })
-  vim.keymap.set({ 'n', 'x', 'o' }, '[F', function()
-    ts_move.goto_previous_end('@function.outer', 'textobjects')
-  end, { desc = 'Previous function end' })
-  vim.keymap.set({ 'n', 'x', 'o' }, '[C', function()
-    ts_move.goto_previous_end('@class.outer', 'textobjects')
-  end, { desc = 'Previous class end' })
 else
   require('nvim-treesitter.configs').setup({
     ensure_installed = treesitter_parsers,
