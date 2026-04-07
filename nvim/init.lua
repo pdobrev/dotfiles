@@ -281,7 +281,9 @@ require("lazy").setup({
     end
   },
 
-  { "chrisbra/csv.vim", ft = "csv" },
+  -- csv.vim relies on its ftplugin being available before the csv syntax script.
+  -- Lazy-loading on FileType can invert that order and trigger startup warnings.
+  { "chrisbra/csv.vim", lazy = false },
 
   -- Markdown
   { "iamcco/markdown-preview.nvim",
